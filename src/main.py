@@ -1,4 +1,4 @@
-from user_interface import print_interface
+from interface import print_interface
 from app import App
 
 def main():

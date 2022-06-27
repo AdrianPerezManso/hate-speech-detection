@@ -1,6 +1,9 @@
+import pickle
+
 from abc import ABC, abstractmethod
 from joblib import load
-from nlp.nlp_module import vectorize_message
+from preprocess.nlp import vectorize_messages
+from train.binmodel import train_model
 
 class Model(ABC):
     @abstractmethod
@@ -9,10 +12,12 @@ class Model(ABC):
 
 class BinaryModel(Model):
     def __init__(self):
-        classifier = load('filename.joblib') 
+        # train_model()
+        self.classifier = load('models/binary_classifier.joblib') 
+        self.vectorizer = pickle.load(open('models/vectorizer.pickle', 'rb'))
 
     def predict(self, msg: str):
-        return self.classifier.predict(vectorize_message(msg))
+        return self.classifier.predict(vectorize_messages(msg))[0]
 
 class MLModel(Model):
     def predict(self, msg: str):
