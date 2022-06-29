@@ -1,9 +1,9 @@
 from interface import print_interface
-from app import App
+from controller import Controller
 
 def main():
-    app = App()
-    print_interface(app)
+    controller = Controller()
+    print_interface(controller)
 
 if __name__ == "__main__":
     main()
