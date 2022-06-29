@@ -1,5 +1,5 @@
-from interface import print_interface
-from controller import Controller
+from ui.interface import print_interface
+from controller.controller import Controller
 
 def main():
     controller = Controller()
