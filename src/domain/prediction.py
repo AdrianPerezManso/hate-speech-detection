@@ -4,11 +4,9 @@ from abc import ABC, abstractmethod
 
 class Prediction(ABC):
     
-    def __init__(self, msg: str):
+    def __init__(self, msg: str, index: int):
         self.msg = msg
-
-    def get_message(self):
-        return self.msg
+        self.index = index
 
     @abstractmethod
     def get_predictions(self):
@@ -20,17 +18,16 @@ class Prediction(ABC):
 
 
 class BinaryPrediction(Prediction):
-    def __init__(self, msg: str, prediction: str):
-        super(BinaryPrediction, self).__init__(msg)
+    def __init__(self, msg: str, index: int,  prediction: str):
+        super(BinaryPrediction, self).__init__(msg, index)
         self.prediction = prediction
 
     def get_predictions(self):
         return self.prediction
 
     def get_predictions_for_output(self):
-        print(type(self.prediction))
-        print(self.prediction == config.APPROPRIATE_PREDICTION)
-        return config.OUTPUT_MESSAGE_APPROPRIATE if self.prediction == config.APPROPRIATE_PREDICTION else config.OUTPUT_MESSAGE_INAPPROPRIATE
+        prediction = config.OUTPUT_MESSAGE_APPROPRIATE if self.prediction == config.APPROPRIATE_PREDICTION else config.OUTPUT_MESSAGE_INAPPROPRIATE
+        return config.BINARY_PREDICTION_FORMAT.format(index=self.index, prediction=prediction)
 
 
 class MLPrediction(Prediction):

@@ -13,7 +13,7 @@ from sklearn.linear_model import LogisticRegression
 
 class Model(ABC):
     @abstractmethod
-    def predict(self, msg: str):
+    def predict(self, msg: str, index: int):
         pass
     @abstractmethod
     def fit_new_data(self, data):
@@ -32,9 +32,9 @@ class BinaryModel(Model):
             with open(config.BINARY_VECT_DIR, 'rb') as f:
                 self.vectorizer = pickle.load(f)
 
-    def predict(self, msg: str):
+    def predict(self, msg: str, index: int):
         result = self.classifier.predict(self._transform_data(msg))[0]
-        return BinaryPrediction(msg, result)
+        return BinaryPrediction(msg, index, result)
     
     def fit_new_data(self, data):
         x_new, y_new = data.x, data.y
@@ -48,7 +48,7 @@ class BinaryModel(Model):
         return self.vectorizer.transform(data)
 
     def _train(self):
-        df = fm.load_dataset_as_df(config.BINARY_DATASET_DIR, column_names=['id', 'target', 'message'], usecols=['target', 'message'])
+        df = fm.load_csv_as_df(config.BINARY_DATASET_DIR, header=0, column_names=['id', 'target', 'message'], usecols=['target', 'message'])
 
         x = df['message'].values
         y = df['target'].values
@@ -76,5 +76,5 @@ class BinaryModel(Model):
 
 
 class MLModel(Model):
-    def predict(self, msg: str):
+    def predict(self, msg: str, index: int):
         print('Prediction of multilabel model: ' + msg)

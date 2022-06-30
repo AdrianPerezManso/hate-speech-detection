@@ -9,7 +9,6 @@ def load_object(path):
     with open(path, 'rb') as f:
         return pickle.load(f)
 
-def load_dataset_as_df(path, **kwargs):
-    return pd.read_csv(path, header=0, names=kwargs.get('column_names'), usecols=kwargs.get('usecols'))
-    
-    
+def load_csv_as_df(path, **kwargs):
+    return pd.read_csv(path, header=kwargs.get('header', None), names=kwargs.get('column_names'), usecols=kwargs.get('usecols'))
+

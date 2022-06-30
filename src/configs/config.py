@@ -28,6 +28,8 @@ PASSWORD_FIELD = 'password'
 # UI Messages constants
 OUTPUT_MESSAGE_APPROPRIATE = 'Appropriate'
 OUTPUT_MESSAGE_INAPPROPRIATE = 'Inappropriate'
+BINARY_PREDICTION_FORMAT = 'Message: {index}, Predicted: {prediction}'
+
 OUTPUT_MESSAGE_TOXIC = 'Toxic'
 OUTPUT_MESSAGE_NON_TOXIC = 'Not toxic'
 OUTPUT_MESSAGE_SEVERE_TOXIC = 'Severe toxic'
@@ -40,6 +42,8 @@ OUTPUT_MESSAGE_INSULT = 'Insult'
 OUTPUT_MESSAGE_NON_INSULT = 'Not insult'
 OUTPUT_MESSAGE_IDENTITY_HATE = 'Identity hate'
 OUTPUT_MESSAGE_NON_IDENTITY_HATE = 'Not identity hate'
+
+OUTPUT_MESSAGE_NOT_PREDICTED = 'Message: {index}, Not predicted'
 
 # Predictions
 APPROPRIATE_PREDICTION = 0
@@ -54,3 +58,9 @@ UNICODE = '&#'
 
 # Message configuration
 MAX_MESSAGE_LENGTH = 500
+
+# Exceptions messages
+ERROR_NOT_STRING_MESSAGE = 'Message {index} is not a valid message'
+ERROR_BLANK_MESSAGE = 'Message {index} is blank. Not predicted'
+ERROR_MAX_LENGTH_MESSAGE = 'Message {index} has exceeded maximum characters. Not predicted'
+ERROR_FILE_WRONG_NUM_OF_COLS = 'The file does not have the correct number of columns. Discarding file'
