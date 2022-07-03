@@ -9,6 +9,7 @@ def print_interface(controller: ClassificationController):
         print('4 - Autenticarse')
         print('5 - Subir archivo')
         print('6 - Correct prediction')
+        print('7 - Save results to file')
         print('9 - Salir')
         user_input = input('Opción: ')
         match user_input:
@@ -39,6 +40,8 @@ def print_interface(controller: ClassificationController):
                 for char in input_prediction_value.split(','):
                     result.append(int(char))
                 controller.correct_predictions(result)
+            case '7':
+                controller.save_results_to_file()
             case '9':
                 return
 

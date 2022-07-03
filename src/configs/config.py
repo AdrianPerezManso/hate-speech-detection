@@ -6,6 +6,7 @@ MODELS_FOLDER = 'models/'
 DATASETS_FOLDER = 'datasets/'
 BINARY_DATASET_FOLDER = 'binary/'
 MULTILABEL_DATASET_FOLDER = 'ml/'
+OUTPUT_FOLDER = 'out/'
 
 BINARY_MODEL_FILENAME = 'binary_classifer.pkl'
 BINARY_VECT_FILENAME = 'binary_vectorizer.pkl'
@@ -18,6 +19,10 @@ BINARY_VECT_DIR = os.path.join(PROJECT_ROOT, MODELS_FOLDER, BINARY_VECT_FILENAME
 MULTILABEL_MODEL_DIR = os.path.join(PROJECT_ROOT, MODELS_FOLDER, MULTILABEL_MODEL_FILENAME)
 BINARY_DATASET_DIR = os.path.join(DATASETS_FOLDER, BINARY_DATASET_FOLDER, BINARY_DATASET_FILENAME)
 MULTILABEL_DATASET_DIR = os.path.join(DATASETS_FOLDER, MULTILABEL_DATASET_FOLDER, MULTILABEL_DATASET_FILENAME)
+
+OUTPUT_FILE_DIR = os.path.join(PROJECT_ROOT, OUTPUT_FOLDER)
+DATETIME_OUTPUT_FORMAT = '%Y%m%d_%H%M%S'
+OUTPUT_FILE_NAME = 'predictions_{datetime}{extension}' 
 
 # Database constants
 DATABASE_NAME = 'users.db'
@@ -79,7 +84,7 @@ ERROR_MAX_LENGTH_MESSAGE = 'Message {index} has exceeded maximum number of chara
 ERROR_FILE_WRONG_NUM_OF_COLS = 'The file does not have the correct number of columns. Discarding file'
 ERROR_FILE_WRONG_EXTENSION = 'Input file has wrong extension. Discarding file'
 ERROR_NOT_VALID_PREDICTION = 'The prediction of message {index} is not valid. Message not considered for fitting'
-ERROR_NO_LAST_PREDICTION = 'No prediction can be corrected'
+ERROR_NO_LAST_PREDICTION = 'Prediction not found. Try to predict a message first'
 ERROR_BLANK_PREDICTION_VALUE = 'The prediction cannot be blank'
 ERROR_NOT_STRING_USERNAME = 'Username not valid'
 ERROR_NOT_STRING_PASSWORD = 'Password not valid'
@@ -89,6 +94,7 @@ ERROR_MAX_LENGTH_USERNAME = 'Username has exceeded maximum number of characters 
 ERROR_MAX_LENGTH_PASSWORD = 'Password has exceeded maximum number of characters ({max_length})'
 ERROR_AUTHENTICATION = 'Incorrect username or password'
 
-# File extension
+# File contents
 FILE_EXTENSION = '.csv'
+MESSAGE_OUTPUT = '"{message}"'
 

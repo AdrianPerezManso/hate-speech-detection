@@ -4,9 +4,9 @@ from controller.controller import ClassificationController
 
 def main():
     controller = ClassificationController()
-    #print_interface(controller)
+    print_interface(controller)
     #MainWindow(controller).run()
-    AuthenticationWindow(controller).run()
+    #AuthenticationWindow(controller).run()
     #TrainingWindow(controller).run()
 
 if __name__ == "__main__":

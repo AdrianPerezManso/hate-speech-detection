@@ -1,6 +1,5 @@
 import numpy as np
-import pandas as pd
-import math
+from datetime import datetime
 from configs import config
 from classifiers.classifiers import Model, BinaryModel, MLModel
 from domain.prediction import Prediction
@@ -12,7 +11,7 @@ class ClassificationController:
         self.model = BinaryModel()
         self.auth_module = AuthenticationModule()
         self.authenticated = False
-        self.last_prediction = None
+        self.last_predictions = []
 
     def predict(self, msg: str, index: int = 0):
         result = ''
@@ -20,7 +19,7 @@ class ClassificationController:
             validation.check_message_is_valid(msg, index)
             prediction = self.model.predict(np.array([msg]), index)
             result = prediction.get_predictions_for_output()
-            self.last_prediction = prediction
+            self.last_predictions.append(prediction)
         except Exception as e:
             print(e)
             result = config.OUTPUT_MESSAGE_NOT_PREDICTED.format(index=index + 1)
@@ -58,7 +57,7 @@ class ClassificationController:
     def correct_predictions(self, prediction_values: list[int]):
         if(self.authenticated):
             try:
-                if(not self.last_prediction): raise Exception(config.ERROR_NO_LAST_PREDICTION)
+                if(not len(self.last_predictions)): raise Exception(config.ERROR_NO_LAST_PREDICTION)
                 if(not len(prediction_values)): raise Exception(config.ERROR_BLANK_PREDICTION_VALUE)
                 new_pred = self.model.to_prediction(self.last_prediction._msg, 
                                                     self.last_prediction._index, 
@@ -80,6 +79,19 @@ class ClassificationController:
         except Exception as e:
             print(e)
 
-    def save_results_to_file():
-        pass
+    def save_results_to_file(self):
+        try:
+            if(not len(self.last_predictions)): raise Exception(config.ERROR_NO_LAST_PREDICTION)
+            data = [self._construct_prediction_output(pred) for pred in self.last_predictions]
+            data_header = self.last_predictions[0].get_output_header()
+            filename = config.OUTPUT_FILE_NAME.format(datetime=datetime.now().strftime(config.DATETIME_OUTPUT_FORMAT), extension=config.FILE_EXTENSION)
+            fm.create_csv_for_predictions(config.OUTPUT_FILE_DIR, filename, data_header, data)
+        except Exception as e:
+            print(e)
+
+    def clear_classification(self):
+        self.last_predictions = []
+
+    def _construct_prediction_output(self, prediction: Prediction):
+        return [prediction.get_message_for_output(), prediction.get_prediction()]
     

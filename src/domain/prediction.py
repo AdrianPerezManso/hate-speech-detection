@@ -13,11 +13,19 @@ class Prediction(ABC):
         pass
 
     @abstractmethod
+    def get_message_for_output(self):
+        pass
+
+    @abstractmethod
     def get_predictions_for_output(self):
         pass
 
     @abstractmethod
     def validate_prediction(self):
+        pass
+
+    @abstractmethod
+    def get_output_header(self):
         pass
 
 
@@ -29,6 +37,9 @@ class BinaryPrediction(Prediction):
     def get_prediction(self):
         return self._prediction
 
+    def get_message_for_output(self):
+        return config.MESSAGE_OUTPUT.format(message=self._msg)
+
     def get_predictions_for_output(self):
         prediction = config.OUTPUT_MESSAGE_APPROPRIATE if self._prediction == config.APPROPRIATE_PREDICTION else config.OUTPUT_MESSAGE_INAPPROPRIATE
         return config.BINARY_PREDICTION_FORMAT.format(index=self._index + 1, prediction=prediction)
@@ -36,6 +47,9 @@ class BinaryPrediction(Prediction):
     def validate_prediction(self):
         validation.check_message_is_valid(self._msg, self._index)
         validation.check_prediction_is_valid(self._prediction, self._index)
+    
+    def get_output_header(self):
+        return [config.BINARY_MESSAGE_VALUE, config.BINARY_TARGET_VALUE]
 
 
 class MLPrediction(Prediction):

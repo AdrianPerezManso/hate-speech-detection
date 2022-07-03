@@ -23,7 +23,7 @@ def check_num_cols(df: pd.DataFrame, expected_num_col: int):
 def check_message_is_valid(msg: str, index: int):
     if(not check_message_is_string(msg)): raise Exception(config.ERROR_NOT_STRING_MESSAGE.format(index=index + 1))
     if(not check_message_is_not_blank(msg)): raise Exception(config.ERROR_BLANK_MESSAGE.format(index=index + 1))
-    if(not check_message_not_max_len(msg, config.MAX_MESSAGE_LENGTH)): 
+    if(not check_message_not_max_len(msg, config.MESSAGE_MAX_LENGTH)): 
         raise Exception(config.ERROR_MAX_LENGTH_MESSAGE.format(index=index + 1).format(max_length=config.MESSAGE_MAX_LENGTH))
     return True
 
