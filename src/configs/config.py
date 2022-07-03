@@ -26,6 +26,9 @@ USERNAME_FIELD = 'username'
 PASSWORD_FIELD = 'password'
 
 # UI Messages constants
+OUTPUT_BINARY_MODEL = 'Binary'
+OUTPUT_MULTILABEL_MODEL = 'Itemized'
+
 OUTPUT_MESSAGE_APPROPRIATE = 'Appropriate'
 OUTPUT_MESSAGE_INAPPROPRIATE = 'Inappropriate'
 BINARY_PREDICTION_FORMAT = 'Message: {index}, Predicted: {prediction}'
@@ -45,9 +48,17 @@ OUTPUT_MESSAGE_NON_IDENTITY_HATE = 'Not identity hate'
 
 OUTPUT_MESSAGE_NOT_PREDICTED = 'Message: {index}, Not predicted'
 
-# Predictions
+# Data values
 APPROPRIATE_PREDICTION = 0
 INAPPROPRIATE_PREDICTION = 1
+TOXIC_LABEL = 'toxic'
+SEVERE_TOXIC_LABEL = 'severe_toxic'
+OBSCENE_LABEL = 'obscene'
+THREAT_LABEL = 'threat'
+INSULT_LABEL = 'insult'
+IDENTITY_HATE_LABEL = 'identity_hate'
+BINARY_TARGET_VALUE = 'target'
+BINARY_MESSAGE_VALUE = 'message'
 
 # NLP
 LANGUAGE = 'english'
@@ -56,11 +67,28 @@ AT = '@'
 HTTP = 'http'
 UNICODE = '&#'
 
-# Message configuration
-MAX_MESSAGE_LENGTH = 500
+# Max lengths
+MESSAGE_MAX_LENGTH = 500
+USERNAME_MAX_LENGTH = 20
+PASSWORD_MAX_LENGTH = 20
 
 # Exceptions messages
 ERROR_NOT_STRING_MESSAGE = 'Message {index} is not a valid message'
-ERROR_BLANK_MESSAGE = 'Message {index} is blank. Not predicted'
-ERROR_MAX_LENGTH_MESSAGE = 'Message {index} has exceeded maximum characters. Not predicted'
+ERROR_BLANK_MESSAGE = 'Message {index} is blank'
+ERROR_MAX_LENGTH_MESSAGE = 'Message {index} has exceeded maximum number of characters ({max_length})'
 ERROR_FILE_WRONG_NUM_OF_COLS = 'The file does not have the correct number of columns. Discarding file'
+ERROR_FILE_WRONG_EXTENSION = 'Input file has wrong extension. Discarding file'
+ERROR_NOT_VALID_PREDICTION = 'The prediction of message {index} is not valid. Message not considered for fitting'
+ERROR_NO_LAST_PREDICTION = 'No prediction can be corrected'
+ERROR_BLANK_PREDICTION_VALUE = 'The prediction cannot be blank'
+ERROR_NOT_STRING_USERNAME = 'Username not valid'
+ERROR_NOT_STRING_PASSWORD = 'Password not valid'
+ERROR_BLANK_USERNAME = 'Username cannot be blank'
+ERROR_BLANK_PASSWORD = 'Password cannot be blank'
+ERROR_MAX_LENGTH_USERNAME = 'Username has exceeded maximum number of characters ({max_length})'
+ERROR_MAX_LENGTH_PASSWORD = 'Password has exceeded maximum number of characters ({max_length})'
+ERROR_AUTHENTICATION = 'Incorrect username or password'
+
+# File extension
+FILE_EXTENSION = '.csv'
+
