@@ -10,15 +10,21 @@ OUTPUT_FOLDER = 'out/'
 
 BINARY_MODEL_FILENAME = 'binary_classifer.pkl'
 BINARY_VECT_FILENAME = 'binary_vectorizer.pkl'
-MULTILABEL_MODEL_FILENAME = 'multilabel.pkl'
+MULTILABEL_MODEL_FILENAME = 'multilabel_model.pkl'
+MULTILABEL_VECT_FILENAME = 'multilabel_vectorizer.pkl'
 BINARY_DATASET_FILENAME = 'FinalBalancedDataset.csv'
-MULTILABEL_DATASET_FILENAME = ''
+MULTILABEL_TRAIN_DATASET_FILENAME = 'train.csv'
+MULTILABEL_TEST_DATASET_FILENAME = 'test.csv'
+MULTILABEL_TEST_LABELS_FILENAME = 'test_labels.csv'
 
 BINARY_MODEL_DIR = os.path.join(PROJECT_ROOT, MODELS_FOLDER, BINARY_MODEL_FILENAME)
 BINARY_VECT_DIR = os.path.join(PROJECT_ROOT, MODELS_FOLDER, BINARY_VECT_FILENAME)
 MULTILABEL_MODEL_DIR = os.path.join(PROJECT_ROOT, MODELS_FOLDER, MULTILABEL_MODEL_FILENAME)
+MULTILABEL_VECT_DIR = os.path.join(PROJECT_ROOT, MODELS_FOLDER, MULTILABEL_VECT_FILENAME)
 BINARY_DATASET_DIR = os.path.join(DATASETS_FOLDER, BINARY_DATASET_FOLDER, BINARY_DATASET_FILENAME)
-MULTILABEL_DATASET_DIR = os.path.join(DATASETS_FOLDER, MULTILABEL_DATASET_FOLDER, MULTILABEL_DATASET_FILENAME)
+MULTILABEL_TRAIN_DATASET_DIR = os.path.join(DATASETS_FOLDER, MULTILABEL_DATASET_FOLDER, MULTILABEL_TRAIN_DATASET_FILENAME)
+MULTILABEL_TEST_DATASET_DIR = os.path.join(DATASETS_FOLDER, MULTILABEL_DATASET_FOLDER, MULTILABEL_TEST_DATASET_FILENAME)
+MULTILABEL_TEST_LABELS_DIR = os.path.join(DATASETS_FOLDER, MULTILABEL_DATASET_FOLDER, MULTILABEL_TEST_LABELS_FILENAME)
 
 OUTPUT_FILE_DIR = os.path.join(PROJECT_ROOT, OUTPUT_FOLDER)
 DATETIME_OUTPUT_FORMAT = '%Y%m%d_%H%M%S'
@@ -36,7 +42,8 @@ OUTPUT_MULTILABEL_MODEL = 'Itemized'
 
 OUTPUT_MESSAGE_APPROPRIATE = 'Appropriate'
 OUTPUT_MESSAGE_INAPPROPRIATE = 'Inappropriate'
-BINARY_PREDICTION_FORMAT = 'Message: {index}, Predicted: {prediction}'
+OUTPUT_VALID_PREDICTION_FORMAT = 'Message {index}: {prediction}'
+OUTPUT_INVALID_PREDICTION_FORMAT = 'Message {index}: No prediction. Reason: {error}'
 
 OUTPUT_MESSAGE_TOXIC = 'Toxic'
 OUTPUT_MESSAGE_NON_TOXIC = 'Not toxic'
@@ -62,15 +69,24 @@ OBSCENE_LABEL = 'obscene'
 THREAT_LABEL = 'threat'
 INSULT_LABEL = 'insult'
 IDENTITY_HATE_LABEL = 'identity_hate'
+TOXIC_LABEL_INDEX = 0
+SEVERE_TOXIC_LABEL_INDEX = 1
+OBSCENE_LABEL_INDEX = 2
+THREAT_LABEL_INDEX = 3
+INSULT_LABEL_INDEX = 4
+IDENTITY_HATE_LABEL_INDEX = 5
 BINARY_TARGET_VALUE = 'target'
-BINARY_MESSAGE_VALUE = 'message'
+MESSAGE_VALUE = 'message'
+ID_VALUE = 'id'
+
 
 # NLP
 LANGUAGE = 'english'
 REGEX_TOKENIZER = '#\w+|&#[0-9]+;|http\S+|@?\w+'
-AT = '@'
-HTTP = 'http'
-UNICODE = '&#'
+REGEX_AT = '@'
+REGEX_HTTP = 'http'
+REGEX_UNICODE = '&#'
+UNICODE = 'unicode'
 
 # Max lengths
 MESSAGE_MAX_LENGTH = 500
@@ -78,6 +94,8 @@ USERNAME_MAX_LENGTH = 20
 PASSWORD_MAX_LENGTH = 20
 
 # Exceptions messages
+ERROR_ALREADY_AUTHENTICATED = 'You are already authenticated'
+ERROR_NOT_AUTHENTICATED = 'This operation is only available for administrators'
 ERROR_NOT_STRING_MESSAGE = 'Message {index} is not a valid message'
 ERROR_BLANK_MESSAGE = 'Message {index} is blank'
 ERROR_MAX_LENGTH_MESSAGE = 'Message {index} has exceeded maximum number of characters ({max_length})'
@@ -93,6 +111,8 @@ ERROR_BLANK_PASSWORD = 'Password cannot be blank'
 ERROR_MAX_LENGTH_USERNAME = 'Username has exceeded maximum number of characters ({max_length})'
 ERROR_MAX_LENGTH_PASSWORD = 'Password has exceeded maximum number of characters ({max_length})'
 ERROR_AUTHENTICATION = 'Incorrect username or password'
+ERROR_INDEX_NOT_NUMBER = 'The number of the message has to be a number'
+ERROR_NOT_VALID_INDEX = 'The message required was not found'
 
 # File contents
 FILE_EXTENSION = '.csv'

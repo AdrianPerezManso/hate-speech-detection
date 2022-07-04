@@ -24,7 +24,7 @@ def check_message_is_valid(msg: str, index: int):
     if(not check_message_is_string(msg)): raise Exception(config.ERROR_NOT_STRING_MESSAGE.format(index=index + 1))
     if(not check_message_is_not_blank(msg)): raise Exception(config.ERROR_BLANK_MESSAGE.format(index=index + 1))
     if(not check_message_not_max_len(msg, config.MESSAGE_MAX_LENGTH)): 
-        raise Exception(config.ERROR_MAX_LENGTH_MESSAGE.format(index=index + 1).format(max_length=config.MESSAGE_MAX_LENGTH))
+        raise Exception(config.ERROR_MAX_LENGTH_MESSAGE.format(index=index + 1, max_length=config.MESSAGE_MAX_LENGTH))
     return True
 
 def check_auth_credentials_are_valid(usr: str, pwd: str):
@@ -38,3 +38,6 @@ def check_auth_credentials_are_valid(usr: str, pwd: str):
 
 def check_file_extension(path: str, extension: str):
     if(not path.endswith(extension)): raise Exception(config.ERROR_FILE_WRONG_EXTENSION)
+
+def check_index_in_list(index: int, pred_indexes: list[int]):
+    if(index not in pred_indexes): raise Exception(config.ERROR_NOT_VALID_INDEX)

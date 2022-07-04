@@ -19,7 +19,7 @@ def clean_message(message):
       if word.startswith('#'):
         split_hashtag = ' '.join(ws.segment(word))
         tokens_sent = tokens_sent.replace(word, split_hashtag)
-    words_without_handles = list(filter(lambda word: not word.startswith(config.AT) and not word.startswith(config.HTTP) and not word.startswith(config.UNICODE), tokens_sent.split()))
+    words_without_handles = list(filter(lambda word: not word.startswith(config.REGEX_AT) and not word.startswith(config.REGEX_HTTP) and not word.startswith(config.REGEX_UNICODE), tokens_sent.split()))
     return ' '.join([stemmer.stem(x) if not x in EN_STOP_WORDS else x for x in words_without_handles])
 
 def get_stopwords():
