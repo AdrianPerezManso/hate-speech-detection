@@ -1,5 +1,11 @@
 import os
 
+#Execution arguments
+TRAIN_FLAG = '--train'
+TRAIN_FLAG_SHORT = '-t'
+TRAIN_FLAG_HELP = 'This flag is mandatory when running the program for the first time. It trains the models and stores them into files'
+TRAIN_FLAG_ACTION = 'store_true'
+
 # Directories
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MODELS_FOLDER = 'models/'
@@ -59,6 +65,7 @@ OUTPUT_MESSAGE_IDENTITY_HATE = 'Identity hate'
 OUTPUT_MESSAGE_NON_IDENTITY_HATE = 'Not identity hate'
 
 OUTPUT_MESSAGE_NOT_PREDICTED = 'Message: {index}, Not predicted'
+OUTPUT_MESSAGE_PREDICTION = '{index}: {msg}' 
 
 # Data values
 APPROPRIATE_PREDICTION = 0

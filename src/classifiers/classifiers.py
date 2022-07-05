@@ -28,9 +28,6 @@ class Model(ABC):
     @abstractmethod
     def to_prediction(self, msg: str, index: int, prediction: list[int]):
         pass
-    @abstractmethod
-    def _transform_data(self, data):
-        pass
 
 class BinaryModel(Model):
     def __init__(self, train=False):
@@ -49,7 +46,6 @@ class BinaryModel(Model):
 
     def predict(self, msg: str, index: int):
         result = self.classifier.predict(self._transform_data([msg]))[0]
-
         return BinaryPrediction(msg, index, result)
     
     def fit_new_data(self, data: pd.DataFrame):
@@ -100,7 +96,7 @@ class BinaryModel(Model):
         fm.dump_object(config.BINARY_MODEL_DIR, classifier)
         fm.dump_object(config.BINARY_VECT_DIR, vectorizer)
 
-    def _train(self, df_new):
+    def _train(self, df_new=None):
         if(df_new is not None):
             df = df_new
         else:

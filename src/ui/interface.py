@@ -15,7 +15,7 @@ def print_interface(controller: ClassificationController):
         match user_input:
             case '1':
                 msg = input('Mensaje a predecir: ')
-                result = controller.predict(msg)
+                result = controller.predict([msg])
                 print('El mensaje ha sido predecido como: ', result) if result else print('No prediction')
             case '2':
                 print('1 - Modelo binario')

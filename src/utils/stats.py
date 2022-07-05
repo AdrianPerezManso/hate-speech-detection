@@ -17,13 +17,14 @@ def get_stats_for_data(classifier, X, y, make_report=False, multilabel=False, ml
     print('Recall:', metrics.recall_score(y, y_pred,average='weighted'))
     if(make_report):
         print(metrics.classification_report(y, y_pred, target_names=labels))
-
+    
+    labels = [0,1]
     if(multilabel):
         for i, label in enumerate(mllabels):
             print(label)
             cm = metrics.confusion_matrix(y[:,i], y_pred[:,i], labels=labels)
             df_cm = pd.DataFrame(cm, index=labels, columns=labels)
-
+            #print(df_cm)
             df_cm_percentage = df_cm.copy()
             for i in df_cm_percentage:
                 df_cm_percentage[i]/=df_cm_percentage[i].sum()
@@ -31,7 +32,7 @@ def get_stats_for_data(classifier, X, y, make_report=False, multilabel=False, ml
     else:
         cm = metrics.confusion_matrix(y, y_pred, labels=labels)
         df_cm = pd.DataFrame(cm, index=labels, columns=labels)
-
+        print(df_cm)
         df_cm_percentage = df_cm.copy()
         for i in df_cm_percentage:
             df_cm_percentage[i]/=df_cm_percentage[i].sum()

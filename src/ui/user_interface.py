@@ -9,7 +9,6 @@ class MainWindow:
     def __init__(self, controller: ClassificationController):
         self.controller = controller
         self.uploaded_file = ''
-        self.train_window = None
         self.authenticated = False
 
     def handle_message_text_area_event(self, window, values):
@@ -38,12 +37,15 @@ class MainWindow:
                 return
             else:
                 output_msg_text_area = ''
-                for i, pred in enumerate(result):
-                    output_msg_text_area += '{index}: {msg}\n'.format(index=i + 1, msg=pred._msg)
+                for pred in result:
+                    output_msg_text_area += pred.get_message_for_ui()
                 window['<msg_text_area>'].update(value=output_msg_text_area)
         else:
             msg = values['<msg_text_area>']
-            result, _ = self.controller.predict([msg])   
+            result, _ = self.controller.predict([msg]) 
+            pred = result[0]
+            output_msg_text_area = pred.get_message_for_ui()
+            window['<msg_text_area>'].update(value=output_msg_text_area)
         
         output = ''
         for pred in result:
@@ -55,7 +57,7 @@ class MainWindow:
         window['<msg_text_area>'].update(disabled=True)
         window['<msg_file_btn>'].update(disabled=True)
 
-        if(self.authenticated):
+        if(self.authenticated and len(self.controller.last_predictions)):
             window['<correct_pred_panel>'].update(visible=True)
             values = list(map(lambda pred: pred._index + 1, self.controller.last_predictions))
             window['<n_msg_combo>'].update(values=values)
@@ -94,7 +96,7 @@ class MainWindow:
     def handle_n_msg_combo_event(self, window, values):
         if(self.controller.model.get_model_opt() == 'Binary'):
             window['<correct_pred_panel_binary>'].update(visible=True)
-        else:
+        elif(self.controller.model.get_model_opt() == 'Itemized'):
             window['<first_correct_pred_panel_ml>'].update(visible=True)
             window['<second_correct_pred_panel_ml>'].update(visible=True)
             window['<third_correct_pred_panel_ml>'].update(visible=True)
@@ -106,7 +108,7 @@ class MainWindow:
         prediction_values = []
         if(self.controller.model.get_model_opt() == 'Binary'):
             prediction_values.append(1 if values['<bin_correct_pred_combo>'] == 'Inappropriate' else 0)
-        else:
+        elif(self.controller.model.get_model_opt() == 'Itemized'):
             prediction_values.append(1 if values['<toxic_correct_pred_combo>'] == 'Toxic' else 0)
             prediction_values.append(1 if values['<severe_toxic_correct_pred_combo>'] == 'Severe toxic' else 0)
             prediction_values.append(1 if values['<obscene_correct_pred_combo>'] == 'Obscene' else 0)
@@ -485,7 +487,7 @@ class TrainingWindow:
             [fourth_panel]
         ]
         
-        window = sg.Window(title="Authentication", layout=[layout], size=(424, 240), modal=True)
+        window = sg.Window(title="Train", layout=[layout], size=(424, 240), modal=True)
 
         self.handle_events(window)
             

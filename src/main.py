@@ -1,14 +1,16 @@
 from ui.interface import print_interface
 from ui.user_interface import MainWindow, AuthenticationWindow, TrainingWindow, DialogWindow
 from controller.controller import ClassificationController
+from configs import config
+import argparse
 
 def main():
-    controller = ClassificationController()
-    #print_interface(controller)
+    parser = argparse.ArgumentParser()
+    parser.add_argument(config.TRAIN_FLAG_SHORT, config.TRAIN_FLAG, help=config.TRAIN_FLAG_HELP, action=config.TRAIN_FLAG_ACTION)
+
+    args = parser.parse_args()
+    controller = ClassificationController(args.train)
     MainWindow(controller).run()
-    #AuthenticationWindow(controller).run()
-    #TrainingWindow(controller).run()
-    #DialogWindow('This a large text, so I hope it fits in the DialogWindow I just created').run()
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,5 @@
 # Virtual environment
 .venv/
-datasets/
 *.db
 __pycache__/
 *.pyc
