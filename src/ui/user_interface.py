@@ -85,7 +85,7 @@ class MainWindow:
     def handle_save_event(self, window, values):
         errors = self.controller.save_results_to_file()
         if(len(errors)):
-            DialogWindow('ERROR: Save result', errors=errors)
+            DialogWindow('ERROR: Save result', errors=errors).run()
         window['<save_txt>'].update(visible=True)
         window['<save_btn>'].update(disabled=True)
 
@@ -609,9 +609,9 @@ class DialogWindow:
         layout = [
             sg.Column(elements, expand_x = True, expand_y = True, element_justification='c')
         ]
+        
         window = sg.Window(title=self.title, layout=[layout], size=(424, 120), modal=True, finalize=True)
         while True:
-            self.handle_fn(window)
             event, values = window.read()
             if event == 'Exit' or event == sg.WINDOW_CLOSED or event == '<ok_btn>':
                 break
