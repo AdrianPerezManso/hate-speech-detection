@@ -1,6 +1,10 @@
 import pandas as pd
 from configs import config
 
+def check_correct_model_opt(opt: str):
+    if(opt != config.OUTPUT_BINARY_MODEL and opt != config.OUTPUT_MULTILABEL_MODEL):
+        raise Exception(config.ERROR_INVALID_MODEL_OPT)
+
 def check_message_is_string(msg: str):
     return msg and not pd.isnull(msg)
 
@@ -38,6 +42,8 @@ def check_auth_credentials_are_valid(usr: str, pwd: str):
 
 def check_file_extension(path: str, extension: str):
     if(not path.endswith(extension)): raise Exception(config.ERROR_FILE_WRONG_EXTENSION)
+    return True
 
 def check_index_in_list(index: int, pred_indexes: list[int]):
     if(index not in pred_indexes): raise Exception(config.ERROR_NOT_VALID_INDEX)
+    return True

@@ -120,6 +120,7 @@ ERROR_MAX_LENGTH_PASSWORD = 'Password has exceeded maximum number of characters 
 ERROR_AUTHENTICATION = 'Incorrect username or password'
 ERROR_INDEX_NOT_NUMBER = 'The number of the message has to be a number'
 ERROR_NOT_VALID_INDEX = 'The message required was not found'
+ERROR_INVALID_MODEL_OPT = 'Model {opt} is not valid'
 
 # File contents
 FILE_EXTENSION = '.csv'

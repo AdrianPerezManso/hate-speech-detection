@@ -44,7 +44,15 @@ class ClassificationController:
 
 
     def change_classification_method(self, model_opt: str):
-        self.model = self._model_opt_to_model(model_opt)
+        errors = []
+        try:
+            validation.check_correct_model_opt(model_opt)
+            self.model = self._model_opt_to_model(model_opt)
+        except Exception as e:
+            print(e)
+            errors.append(str(e))
+        return errors
+
 
     def authenticate(self, usr: str, pwd: str):
         errors = []
