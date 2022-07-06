@@ -40,8 +40,10 @@ class BinaryPrediction(Prediction):
         return config.OUTPUT_MESSAGE_PREDICTION.format(index=self._index + 1, msg=self._msg)
 
     def get_prediction_for_ui(self):
+        # prediction = config.OUTPUT_MESSAGE_APPROPRIATE if self._prediction == config.APPROPRIATE_PREDICTION else config.OUTPUT_MESSAGE_INAPPROPRIATE
+        # return config.OUTPUT_VALID_PREDICTION_FORMAT.format(index=self._index + 1, prediction=prediction)
         prediction = config.OUTPUT_MESSAGE_APPROPRIATE if self._prediction == config.APPROPRIATE_PREDICTION else config.OUTPUT_MESSAGE_INAPPROPRIATE
-        return config.OUTPUT_VALID_PREDICTION_FORMAT.format(index=self._index + 1, prediction=prediction)
+        return prediction
     
     def validate_prediction(self):
         validation.check_message_is_valid(self._msg, self._index)
@@ -67,8 +69,9 @@ class MLPrediction(Prediction):
         return config.OUTPUT_MESSAGE_PREDICTION.format(index=self._index + 1, msg=self._msg)
 
     def get_prediction_for_ui(self):
-        prediction = self._predictions_to_string()
-        return config.OUTPUT_VALID_PREDICTION_FORMAT.format(index=self._index + 1, prediction=prediction)
+        # prediction = self._predictions_to_string()
+        # return config.OUTPUT_VALID_PREDICTION_FORMAT.format(index=self._index + 1, prediction=prediction)
+        return self._predictions_to_string()
 
     def validate_prediction(self):
         validation.check_message_is_valid(self._msg, self._index)

@@ -1,8 +1,9 @@
 import PySimpleGUI as sg
 import textwrap
 import functools
-import time
+import threading
 from controller.controller import ClassificationController
+from configs import config
 
 class MainWindow:
 
@@ -10,6 +11,7 @@ class MainWindow:
         self.controller = controller
         self.uploaded_file = ''
         self.authenticated = False
+        self.last_predictions = []
 
     def handle_message_text_area_event(self, window, values):
         disable_messages_file_btn = len(values['<msg_text_area>'].strip()) > 0
@@ -47,8 +49,11 @@ class MainWindow:
             output_msg_text_area = pred.get_message_for_ui() + '\n'
             window['<msg_text_area>'].update(value=output_msg_text_area)
         
+        self.last_predictions = self.controller.last_predictions
         output = ''
         for pred in result:
+            output += config.OUTPUT_VALID_PREDICTION_FORMAT.format(index=pred._index + 1)
+            output += ': '
             output += pred.get_prediction_for_ui() + '\n'
         window['<pred_text_area>'].update(value=output)
 
@@ -65,6 +70,7 @@ class MainWindow:
     def handle_clear_event(self, window, values):
         self.controller.clear_classification()
         self.uploaded_file = ''
+        self.last_predictions = []
         window['<msg_text_area>'].update(value='', disabled=False)
         window['<pred_text_area>'].update(value='')
         window['<classify_btn>'].update(disabled=True)
@@ -106,8 +112,10 @@ class MainWindow:
     def handle_submit_correct_pred_event(self, window, values):
         msg_index = values['<n_msg_combo>']
         prediction_values = []
+        prediction_strings = []
         if(self.controller.model.get_model_opt() == 'Binary'):
             prediction_values.append(1 if values['<bin_correct_pred_combo>'] == 'Inappropriate' else 0)
+            prediction_strings.append(values['<bin_correct_pred_combo>'])
         elif(self.controller.model.get_model_opt() == 'Itemized'):
             prediction_values.append(1 if values['<toxic_correct_pred_combo>'] == 'Toxic' else 0)
             prediction_values.append(1 if values['<severe_toxic_correct_pred_combo>'] == 'Severe toxic' else 0)
@@ -115,10 +123,18 @@ class MainWindow:
             prediction_values.append(1 if values['<threat_correct_pred_combo>'] == 'Threat' else 0)
             prediction_values.append(1 if values['<insult_correct_pred_combo>'] == 'Insult' else 0)
             prediction_values.append(1 if values['<identity_hate_correct_pred_combo>'] == 'Identity hate' else 0)
+            prediction_strings.append(values['<toxic_correct_pred_combo>'])
+            prediction_strings.append(values['<severe_toxic_correct_pred_combo>'])
+            prediction_strings.append(values['<obscene_correct_pred_combo>'])
+            prediction_strings.append(values['<threat_correct_pred_combo>'])
+            prediction_strings.append(values['<insult_correct_pred_combo>'])
+            prediction_strings.append(values['<identity_hate_correct_pred_combo>'])
 
         fn = functools.partial(self.controller.correct_predictions, msg_index, prediction_values)
-        fn_end_msg = 'Predicion successfully corrected'
-        DialogWindow(title='Perfoming operation...', fn=fn, fn_end_msg=fn_end_msg).run()
+        title = 'Correcting predictions'
+        msg = self._message_for_confirmation_dialog(msg_index, prediction_strings)
+        fn_end_msg = 'Prediction successfully corrected'
+        TrainingConfirmationWindow(self.controller, fn, title, msg, fn_end_msg).run()
 
 
     def handle_cancel_correct_pred_event(self, window, values):
@@ -135,6 +151,18 @@ class MainWindow:
         window['<second_correct_pred_panel_ml>'].update(visible=False)
         window['<third_correct_pred_panel_ml>'].update(visible=False)
         window['<submit_correct_pred_btn>'].update(disabled=True)
+    
+    def _message_for_confirmation_dialog(self, msg_index, new_pred):
+        result = 'Operation:\t Predict messages\n'
+        pred = self._get_message_by_index(msg_index)
+        result += 'Message {msg_index}:\t "{msg}"\n'.format(msg_index=msg_index, msg=pred._msg)
+        result += 'Old prediction:\t {old_value}\n'.format(old_value=pred.get_prediction_for_ui())
+        result += 'New prediction:\t {new_value}\n'.format(new_value=new_pred)
+        return result
+
+    def _get_message_by_index(self, msg_index):
+        result = list(filter(lambda pred: pred._index == msg_index - 1, self.last_predictions))
+        return result[0]
 
     def handle_events(self, window):
         while True:
@@ -400,8 +428,17 @@ class TrainingWindow:
         model_opt = values['<method_combo>']
         file = values['<file_in>']
         fn = functools.partial(self.controller.train_models, model_opt, file)
-        fn_end_msg = 'Training was successful'
-        DialogWindow(title='Perfoming operation...', fn=fn, fn_end_msg=fn_end_msg).run()
+        title = 'Training model'
+        msg = self._message_for_confirmation_dialog(model_opt, file)
+        fn_end_msg = 'Training was performed successfully'
+        TrainingConfirmationWindow(self.controller, fn, title, msg, fn_end_msg).run()
+        window.write_event_value('Exit', None)
+
+    def _message_for_confirmation_dialog(self, model_opt, file):
+        result = 'Operation:\t Train model\n'
+        result += 'Model to train:\t {model_opt} model\n'.format(model_opt=model_opt)
+        result += 'Data:\t {file}'.format(file=file)
+        return result
 
     def handle_events(self, window):
         while True:
@@ -493,27 +530,62 @@ class TrainingWindow:
             
         window.close()
 
-class DialogWindow:
-    def __init__(self, title, fn=None, fn_end_msg='', errors=[]):
+class TrainingConfirmationWindow:
+    def __init__(self, controller, controller_fn, title, window_msg, final_msg):
+        self.controller = controller
+        self.controller_fn = controller_fn
+        self.window_msg = window_msg
         self.title = title
-        self.fn = fn
-        self.fn_end_msg = fn_end_msg
-        self.errors = errors
+        self.final_msg = final_msg
+
+    def handle_confirmation_event(self, window, values):
+        window['<cancel_btn>'].update(visible=False)
+        window['<confirm_btn>'].update(visible=False)
+        window['<confirm_txt>'].update(visible=False)
+        window['<ok_btn>'].update(visible=True)
+        window['<msg_txt>'].update(value='Performing operation. This might take some time, please wait')
+        window.refresh()
+        errors = self.controller_fn()
+        #window['<msg_txt>'].update(font='30')
+        if(len(errors)):
+            window['<msg_txt>'].update(self._build_error_message(errors))
+        else:
+            window['<msg_txt>'].update(self.final_msg)
+        window['<ok_btn>'].update(disabled=False)
     
-    def handle_fn(self, window):
-        if(self.fn):
-            self.errors = self.fn()
-            window['<ok_btn>'].update(disabled=False)
-            window.TKroot.title('Operation completed')
-            if(len(self.errors)):
-                if(len(self.errors) > 1):
-                    print(self.errors)
-                    window['<error_txt_area>'].update(value='\n'.join(self.errors), visible=True)
-                else:
-                    window['<txt>'].update(value=self._build_errors_message(self.errors), visible=True)
-            else:
-                window['<txt>'].update('\n'.join(textwrap.wrap(self.fn_end_msg, 60)))
-        
+    def handle_events(self, window):
+        while True:
+            event, values = window.read()
+            if event == 'Exit' or event == sg.WINDOW_CLOSED or event == '<cancel_btn>' or event == '<ok_btn>':
+                break
+            if event == '<confirm_btn>':
+                self.handle_confirmation_event(window, values)
+    
+    def _build_error_message(self, errors):
+        return '\n'.join(textwrap.wrap('\n'.join(errors), 125, replace_whitespace=False))
+
+    def _get_wrapped_msg(self):
+        return '\n'.join(textwrap.wrap(self.window_msg, 125, replace_whitespace=False))
+
+    def run(self):
+        elements = [
+            [sg.Text(self._get_wrapped_msg(), expand_y=True, font='25', k='<msg_txt>')],
+            [sg.Text(expand_y=True, visible=False)],
+            [sg.Text('Proceed with operation?', k='<confirm_txt>')],
+            [sg.Button('Confirm', k='<confirm_btn>'), sg.Button('Cancel', k='<cancel_btn>'), sg.Button('OK', k='<ok_btn>', visible=False, disabled=True)]
+        ]
+
+        layout = [
+            sg.Column(elements, expand_x = True, expand_y = True, element_justification='c')
+        ]
+        window = sg.Window(title=self.title, layout=[layout], size=(636, 240), modal=True, finalize=True)
+        self.handle_events(window)
+        window.close()
+
+class DialogWindow:
+    def __init__(self, title, errors=[]):
+        self.title = title
+        self.errors = errors       
 
     def _get_message(self):
         return self._build_errors_message(self.errors) if len(self.errors) else 'Processing...'
@@ -529,7 +601,6 @@ class DialogWindow:
 
     def run(self):
         elements = [
-            #self.messages_ui_element,
             [sg.Text(self._get_message(), font='25', expand_y=True, justification='c', k='<txt>', visible= not self._get_errors_len() > 1)],
             [sg.Multiline(self._get_message(), expand_x = True, expand_y = True, k='<error_txt_area>', visible= self._get_errors_len() > 1)],
             [sg.Button('OK', enable_events=True, k='<ok_btn>')]

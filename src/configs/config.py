@@ -48,8 +48,8 @@ OUTPUT_MULTILABEL_MODEL = 'Itemized'
 
 OUTPUT_MESSAGE_APPROPRIATE = 'Appropriate'
 OUTPUT_MESSAGE_INAPPROPRIATE = 'Inappropriate'
-OUTPUT_VALID_PREDICTION_FORMAT = 'Message {index}: {prediction}'
-OUTPUT_INVALID_PREDICTION_FORMAT = 'Message {index}: No prediction. Reason: {error}'
+OUTPUT_VALID_PREDICTION_FORMAT = 'Message {index}'
+OUTPUT_INVALID_PREDICTION_FORMAT = 'No prediction. Reason: {error}'
 
 OUTPUT_MESSAGE_TOXIC = 'Toxic'
 OUTPUT_MESSAGE_NON_TOXIC = 'Not toxic'
