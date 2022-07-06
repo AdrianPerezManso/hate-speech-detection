@@ -38,13 +38,13 @@ class MainWindow:
             else:
                 output_msg_text_area = ''
                 for pred in result:
-                    output_msg_text_area += pred.get_message_for_ui()
+                    output_msg_text_area += pred.get_message_for_ui() + '\n'
                 window['<msg_text_area>'].update(value=output_msg_text_area)
         else:
             msg = values['<msg_text_area>']
             result, _ = self.controller.predict([msg]) 
             pred = result[0]
-            output_msg_text_area = pred.get_message_for_ui()
+            output_msg_text_area = pred.get_message_for_ui() + '\n'
             window['<msg_text_area>'].update(value=output_msg_text_area)
         
         output = ''
