@@ -72,7 +72,9 @@ class BinaryModel(Model):
         return self.fit_new_data(df)
 
     def to_prediction(self, msg: str, index: int, prediction: list[int]):
-        return BinaryPrediction(msg, index, prediction[0])
+        validation.check_prediction(msg, index, prediction, config.NUM_TARGETS_BINARY_MODEL)
+        pred = BinaryPrediction(msg, index, prediction[0])
+        return pred
     
     def _filter_invalid_data(self, y: list[int], x: list[str]):
         y_filtered, x_filtered, errors = [], [], []
@@ -80,8 +82,7 @@ class BinaryModel(Model):
             try:
                 msg = x[i]
                 pred = y[i] 
-                validation.check_message_is_valid(msg, i)
-                validation.check_prediction_is_valid(pred, i)
+                validation.check_prediction(msg, i, [pred], config.NUM_TARGETS_BINARY_MODEL)
                 y_filtered.append(pred)
                 x_filtered.append(msg)
             except Exception as e:
@@ -194,6 +195,7 @@ class MLModel(Model):
         return self.fit_new_data(df)
     
     def to_prediction(self, msg: str, index: int, prediction: list[int]):
+        validation.check_prediction(msg, index, prediction, config.NUM_TARGETS_MULTILABEL_MODEL)
         return MLPrediction(msg, index, prediction)
     
     def _transform_data(self, data):
@@ -205,13 +207,10 @@ class MLModel(Model):
             try:
                 msg = x[i]
                 pred = y[i] 
-                validation.check_message_is_valid(msg, i)
-                validation.check_prediction_is_valid(pred[config.TOXIC_LABEL_INDEX], i)
-                validation.check_prediction_is_valid(pred[config.SEVERE_TOXIC_LABEL_INDEX], i)
-                validation.check_prediction_is_valid(pred[config.OBSCENE_LABEL_INDEX], i)
-                validation.check_prediction_is_valid(pred[config.THREAT_LABEL_INDEX], i)
-                validation.check_prediction_is_valid(pred[config.INSULT_LABEL_INDEX], i)
-                validation.check_prediction_is_valid(pred[config.IDENTITY_HATE_LABEL_INDEX], i)
+                pred_values = [pred[config.TOXIC_LABEL_INDEX], pred[config.SEVERE_TOXIC_LABEL_INDEX],
+                               pred[config.OBSCENE_LABEL_INDEX], pred[config.THREAT_LABEL_INDEX],
+                               pred[config.INSULT_LABEL_INDEX], pred[config.IDENTITY_HATE_LABEL_INDEX]]
+                validation.check_prediction(msg, i, pred_values, config.NUM_TARGETS_MULTILABEL_MODEL)
                 y_filtered.append(pred)
                 x_filtered.append(msg)
             except Exception as e:

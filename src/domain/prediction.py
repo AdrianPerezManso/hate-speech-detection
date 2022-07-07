@@ -16,7 +16,7 @@ class Prediction(ABC):
         pass
 
     @abstractmethod
-    def validate_prediction(self):
+    def get_prediction_for_txt(self):
         pass
 
     @abstractmethod
@@ -40,15 +40,11 @@ class BinaryPrediction(Prediction):
         return config.OUTPUT_MESSAGE_PREDICTION.format(index=self._index + 1, msg=self._msg)
 
     def get_prediction_for_ui(self):
-        # prediction = config.OUTPUT_MESSAGE_APPROPRIATE if self._prediction == config.APPROPRIATE_PREDICTION else config.OUTPUT_MESSAGE_INAPPROPRIATE
-        # return config.OUTPUT_VALID_PREDICTION_FORMAT.format(index=self._index + 1, prediction=prediction)
         prediction = config.OUTPUT_MESSAGE_APPROPRIATE if self._prediction == config.APPROPRIATE_PREDICTION else config.OUTPUT_MESSAGE_INAPPROPRIATE
         return prediction
-    
-    def validate_prediction(self):
-        validation.check_message_is_valid(self._msg, self._index)
-        validation.check_prediction_is_valid(self._prediction, self._index)
-        return True
+
+    def get_prediction_for_txt(self):
+        return config.OUTPUT_TXT_FILE.format(msg=self._msg, pred=self.get_prediction_for_ui())
     
     def get_header_for_output_file(self):
         return [config.MESSAGE_VALUE, config.BINARY_TARGET_VALUE]
@@ -69,19 +65,10 @@ class MLPrediction(Prediction):
         return config.OUTPUT_MESSAGE_PREDICTION.format(index=self._index + 1, msg=self._msg)
 
     def get_prediction_for_ui(self):
-        # prediction = self._predictions_to_string()
-        # return config.OUTPUT_VALID_PREDICTION_FORMAT.format(index=self._index + 1, prediction=prediction)
         return self._predictions_to_string()
 
-    def validate_prediction(self):
-        validation.check_message_is_valid(self._msg, self._index)
-        validation.check_prediction_is_valid(self._prediction[config.TOXIC_LABEL_INDEX], self._index)
-        validation.check_prediction_is_valid(self._prediction[config.SEVERE_TOXIC_LABEL_INDEX], self._index)
-        validation.check_prediction_is_valid(self._prediction[config.OBSCENE_LABEL_INDEX], self._index)
-        validation.check_prediction_is_valid(self._prediction[config.THREAT_LABEL_INDEX], self._index)
-        validation.check_prediction_is_valid(self._prediction[config.INSULT_LABEL_INDEX], self._index)
-        validation.check_prediction_is_valid(self._prediction[config.IDENTITY_HATE_LABEL_INDEX], self._index)
-        return True
+    def get_prediction_for_txt(self):
+        return config.OUTPUT_TXT_FILE.format(msg=self._msg, pred=self._predictions_to_string())
 
     def get_header_for_output_file(self):
         return [config.MESSAGE_VALUE, config.TOXIC_LABEL, config.SEVERE_TOXIC_LABEL, config.OBSCENE_LABEL,
@@ -119,9 +106,9 @@ class EmptyPrediction(Prediction):
     def get_prediction_for_ui(self):
         return config.OUTPUT_INVALID_PREDICTION_FORMAT.format(index=self._index + 1, error=self._error_msg)
 
-    def validate_prediction(self):
+    def get_prediction_for_txt(self):
         pass
-
+    
     def get_header_for_output_file(self):
         pass
 

@@ -14,7 +14,14 @@ def check_message_is_not_blank(msg: str):
 def check_message_not_max_len(msg: str, max_length: int):
     return len(msg) <= max_length
 
-def check_prediction_is_valid(pred: int, index: int):
+def check_prediction(msg: str, index: int, prediction_values: list[int], num_targets: int):
+    if(len(prediction_values) != num_targets): 
+        raise Exception(config.ERROR_WRONG_NUM_OF_PREDICTION_VALUES.format(index=index + 1, num=num_targets))
+    check_message_is_valid(msg, index)
+    for val in prediction_values:
+        check_prediction_value_is_valid(val, index)
+
+def check_prediction_value_is_valid(pred: int, index: int):
     if (pred != config.APPROPRIATE_PREDICTION and 
         pred != config.INAPPROPRIATE_PREDICTION):
             raise Exception(config.ERROR_NOT_VALID_PREDICTION.format(index=index + 1))
@@ -36,6 +43,7 @@ def check_auth_credentials_are_valid(usr: str, pwd: str):
     if(not check_message_is_string(pwd)): raise Exception(config.ERROR_NOT_STRING_PASSWORD)
     if(not check_message_is_not_blank(usr)): raise Exception(config.ERROR_BLANK_USERNAME)
     if(not check_message_is_not_blank(pwd)): raise Exception(config.ERROR_BLANK_PASSWORD)
+    if(not usr.isalnum()): raise Exception(config.ERROR_NOT_ALPHANUM_USERNAME)
     if(not check_message_not_max_len(usr, config.USERNAME_MAX_LENGTH)): raise Exception(config.ERROR_MAX_LENGTH_USERNAME.format(max_length=config.USERNAME_MAX_LENGTH))
     if(not check_message_not_max_len(pwd, config.PASSWORD_MAX_LENGTH)): raise Exception(config.ERROR_MAX_LENGTH_PASSWORD.format(max_length=config.PASSWORD_MAX_LENGTH))
     return True

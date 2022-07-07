@@ -4,7 +4,7 @@ import csv
 import os
 
 def dump_object(path, object):
-    if(not os.path.exists(path)): os.makedirs(path)
+    if(not os.path.exists(os.path.dirname(path))): os.makedirs(path)
     with open(path, 'wb') as fout:
         pickle.dump(object, fout)
 
@@ -22,4 +22,10 @@ def create_csv_for_predictions(path, filename, header, data):
         writer.writerow(header)
         for row in data:
             writer.writerow(row)
+
+def create_txt_for_predictions(path, filename, data):
+    if(not os.path.exists(path)): os.makedirs(path)
+    with open(os.path.join(path, filename), 'w', newline='') as f:
+        for row in data:
+            f.write(row + '\n')
 
