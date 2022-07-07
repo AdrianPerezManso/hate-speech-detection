@@ -227,7 +227,7 @@ class MainWindow:
         ]
         up_panel_right_panel = [
            [sg.Text(expand_y=True, visible=False)],
-           [sg.Button('Authenticate', enable_events=True, k='<auth_btn>')],
+           [sg.Button('Log as administrator', enable_events=True, k='<auth_btn>')],
            [sg.Button('Train model', enable_events=True, k='<train_btn>', visible=False)],
            [sg.Text(expand_y=True, visible=False)]
         ]
@@ -318,7 +318,7 @@ class MainWindow:
             [up_panel],
             [down_panel]
         ]
-        window = sg.Window(title="Detect inappropriate message", layout=[layout], size=(960, 544))
+        window = sg.Window(title="Detect inappropriate messages", layout=[layout], size=(960, 544))
 
         self.handle_events(window)
         window.close()
@@ -429,7 +429,7 @@ class AuthenticationWindow:
             [fourth_panel]
         ]
 
-        window = sg.Window(title="Authentication", layout=[layout], size=(424, 240), modal=True)
+        window = sg.Window(title="Log as Administrator", layout=[layout], size=(424, 240), modal=True)
 
         self.handle_events(window)
         window.close()
