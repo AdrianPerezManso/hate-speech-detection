@@ -2,7 +2,7 @@ import pickle
 import pandas as pd
 import time
 
-from configs import config
+from configs import config, uiconfig
 from abc import ABC, abstractmethod
 from joblib import load
 from domain.prediction import Prediction, BinaryPrediction, MLPrediction
@@ -12,7 +12,6 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.linear_model import SGDClassifier
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn_instrumentation import SklearnInstrumentor
-from sklearn_instrumentation.instruments.memory_profiler import MemoryProfiler 
 
 class Model(ABC):
     @abstractmethod
@@ -44,7 +43,7 @@ class BinaryModel(Model):
                 self.classifier = pickle.load(f)
     
     def get_model_opt(self):
-        return config.OUTPUT_BINARY_MODEL
+        return uiconfig.UI_BINARY_MODEL
 
     def predict(self, msg: str, index: int):
         result = self.classifier.predict(self._transform_data([msg]))[0]
@@ -138,7 +137,7 @@ class MLModel(Model):
                 self.classifier = pickle.load(f)
 
     def get_model_opt(self):
-        return config.OUTPUT_MULTILABEL_MODEL
+        return uiconfig.UI_MULTILABEL_MODEL
     
     def predict(self, msg: str, index: int):
         prediction = self.classifier.predict(self._transform_data([msg]))[0]

@@ -3,7 +3,7 @@ import textwrap
 import functools
 import threading
 from controller.controller import ClassificationController
-from configs import config
+from configs import config, uiconfig
 from utils import file_management as fm
 
 class MainWindow:
@@ -55,14 +55,13 @@ class MainWindow:
             self.last_predictions = self.controller.last_predictions
             output = ''
             for pred in result:
-                output += config.OUTPUT_VALID_PREDICTION_FORMAT.format(index=pred._index + 1)
+                output += uiconfig.UI_VALID_PREDICTION_FORMAT.format(index=pred._index + 1)
                 output += ': '
                 output += pred.get_prediction_for_ui() + '\n'
             window['<pred_text_area>'].update(value=output)
 
             window['<save_csv_btn>'].update(disabled=False)
             window['<save_txt_btn>'].update(disabled=False)
-            window['<method_combo>'].update(disabled=True)
             window['<msg_text_area>'].update(disabled=True)
             window['<classify_btn>'].update(disabled=True)
             window['<refresh_classify_btn>'].update(disabled=False)
@@ -75,6 +74,7 @@ class MainWindow:
         
     def handle_refresh_classify_event(self, window, values):
         result, _ = self.controller.redo_last_prediction()
+        self.last_predictions = []
         output_msg_text_area = ''
         for pred in result:
             output_msg_text_area += pred.get_message_for_ui() + '\n'
@@ -83,14 +83,13 @@ class MainWindow:
         self.last_predictions = self.controller.last_predictions
         output = ''
         for pred in result:
-            output += config.OUTPUT_VALID_PREDICTION_FORMAT.format(index=pred._index + 1)
+            output += uiconfig.UI_VALID_PREDICTION_FORMAT.format(index=pred._index + 1)
             output += ': '
             output += pred.get_prediction_for_ui() + '\n'
         window['<pred_text_area>'].update(value=output)
 
         window['<save_csv_btn>'].update(disabled=False)
         window['<save_txt_btn>'].update(disabled=False)
-        window['<method_combo>'].update(disabled=True)
         window['<msg_text_area>'].update(disabled=True)
         window['<classify_btn>'].update(disabled=True)
         window['<msg_file_btn>'].update(disabled=True)
@@ -255,12 +254,26 @@ class MainWindow:
             sg.Button('Clear All', expand_x = True, expand_y=False, enable_events=True, k='<clear_btn>'),
             sg.Button('Refresh', enable_events=True, k='<refresh_classify_btn>', disabled=True)]
         ]
+
+        method_submission_options_panel = [
+            [sg.Combo(['Binary', 'Itemized'], default_value='Binary', expand_x= True, readonly=True, enable_events=True, k='<method_combo>')],
+            [sg.FileBrowse('Submit messages file', enable_events=True, k='<msg_file_btn>', file_types=(("CSV", "*.csv"),))]
+        ]
+
+        help_button_panel = [
+            [sg.Text(expand_y=True, visible=True)],
+            [sg.Button('ⓘ', font='30', k='<help_btn>')]
+        ]
+
+        method_submission_panel = [
+            sg.Column(method_submission_options_panel),
+            sg.Column(help_button_panel)
+        ]
+
         up_panel_medium_panel = [
            [sg.Text(expand_y=True, visible=False)],
            [sg.Text('Select classification method', font='25')],
-           [sg.Combo(['Binary', 'Itemized'], default_value='Binary', readonly=True, enable_events=True, k='<method_combo>')],
-           [sg.FileBrowse('Submit messages file', enable_events=True, k='<msg_file_btn>', file_types=(("CSV", "*.csv"),)),
-           sg.Button('ⓘ', font='30', k='<help_btn>')],
+           method_submission_panel,
            [sg.Text('...Submitted data.csv', k='<msg_file_txt>', visible=False)],
            [sg.Text(expand_y=True, visible=False)],
         ]
@@ -275,15 +288,24 @@ class MainWindow:
             sg.Column(up_panel_medium_panel, expand_x = True, expand_y = True),
             sg.Column(up_panel_right_panel, expand_x = True, expand_y = True)
         ]
+
+        csv_panel = [
+            [sg.FolderBrowse('Save results to .csv file', disabled=True, enable_events=True, k='<save_csv_btn>')]
+        ]
+
+        txt_panel = [
+            [sg.FolderBrowse('Save results to .txt file', disabled=True, enable_events=True, k='<save_txt_btn>')]
+        ]
+
+        save_buttons_panel = [
+            sg.Column(csv_panel),
+            sg.Column(txt_panel)
+        ]
+
         down_panel_left_panel = [
            [sg.Text('Prediction', font='25')],
-           [sg.Multiline(expand_x = True, expand_y = True, disabled=True, k='<pred_text_area>')]
-        ]
-        down_panel_medium_panel = [
-           [sg.Text(expand_y=True, visible=False)],
-           [sg.FolderBrowse('Save results to .csv file', disabled=True, enable_events=True, k='<save_csv_btn>')],
-           [sg.FolderBrowse('Save results to .txt file', disabled=True, enable_events=True, k='<save_txt_btn>')],
-           [sg.Text(expand_y=True, visible=False)],
+           [sg.Multiline(expand_x = True, expand_y = True, disabled=True, k='<pred_text_area>')],
+            save_buttons_panel
         ]
 
         cp_up_first = [
@@ -349,8 +371,8 @@ class MainWindow:
            cp_down_panel
         ]
         down_panel = [
-            sg.Column(down_panel_left_panel, expand_x = True, expand_y = True),
-            sg.Column(down_panel_medium_panel, expand_x = True, expand_y = True),
+            sg.Column(down_panel_left_panel, expand_x = True, expand_y = True, element_justification='c'),
+            # sg.Column(down_panel_medium_panel, expand_x = True, expand_y = True),
             sg.Column(down_panel_right_panel, expand_x = True, expand_y = True, k='<correct_pred_panel>', visible=False)
         ]
         layout = [
@@ -496,21 +518,23 @@ class TrainingWindow:
         TrainingConfirmationWindow(self.controller, fn, title, msg, fn_end_msg).run()
         window.write_event_value('Exit', None)
 
+    
+    
+    def handle_method_combo_event(self, window, values):
+        if(values['<method_combo>'] == 'Binary'):
+            window['<example_txt>'].update('Example for a row in the file:\n0,”he was a boy”')
+        if(values['<method_combo>'] == 'Itemized'):
+            window['<example_txt>'].update('Example for a row in the file:\n“this is a message”,0,0,0,0,0,0')
+    
+    def handle_train_help_event(self, window, values):
+        path = config.PROJECT_ROOT + '/help/' + 'train_data.txt'
+        HelpWindow(path).run()
+
     def _message_for_confirmation_dialog(self, model_opt, file):
         result = 'Operation:\t Train model\n'
         result += 'Model to train:\t {model_opt} model\n'.format(model_opt=model_opt)
         result += 'Data:\t {file}'.format(file=file)
         return result
-    
-    def handle_method_combo_event(self, window, values):
-        if(values['<method_combo>'] == 'Binary'):
-            window['<example_txt>'].update('Example for a row in the file: 0,”he was a boy”')
-        if(values['<method_combo>'] == 'Itemized'):
-            window['<example_txt>'].update('Example for a row in the file: “this is a message”,0,0,0,0,0,0')
-    
-    def handle_train_help_event(self, window, values):
-        path = config.PROJECT_ROOT + '/help/' + 'train_data.txt'
-        HelpWindow(path).run()
 
     def handle_events(self, window):
         while True:
@@ -557,8 +581,12 @@ class TrainingWindow:
             sg.Column(s_right_panel, expand_x = True, expand_y = True)
         ]
 
+        t_left_panel = [
+            [sg.Text('Example for a row in the file:\n0,”he was a boy”', font='20', text_color='light gray', expand_x=True, expand_y=True, k='<example_txt>', justification='c')]
+        ]
+
         third_panel = [
-            sg.Text('Example for a row in the file: 0,”he was a boy”', text_color='light gray', expand_y=True, expand_x=True, justification='c', k='<example_txt>'),
+            sg.Column(t_left_panel, expand_y=True, expand_x=True, element_justification='c'),
             sg.Button('ⓘ', font='30', k='<help_btn>')
         ]
 

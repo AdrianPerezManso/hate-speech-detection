@@ -1,6 +1,6 @@
 import numpy as np
 from datetime import datetime
-from configs import config
+from configs import config, uiconfig
 from classifiers.classifiers import Model, BinaryModel, MLModel
 from domain.prediction import Prediction, EmptyPrediction
 from auth.authentication import AuthenticationModule
@@ -16,7 +16,6 @@ class ClassificationController:
         self.authenticated = False
         self.last_predictions = []
 
-    @profile
     def predict(self, messages: list[str]):
         result, errors = [], []
         for index, msg in enumerate(messages):
@@ -31,7 +30,6 @@ class ClassificationController:
                 errors.append(str(e))
         return result, errors
 
-    @profile
     def predict_messages_in_file(self, msgs_path: str):
         result, errors = [], []
         try:
@@ -45,7 +43,16 @@ class ClassificationController:
         return result, errors
 
     def redo_last_prediction(self):
-        return self.predict([pred._msg for pred in self.last_predictions])
+        result, errors = [], []
+        try:
+            if(not len(self.last_predictions)): raise Exception(config.ERROR_BLANK_PREDICTION_VALUE)
+            last_pred_copy = self.last_predictions.copy()
+            self.clear_classification()
+            result, errors = self.predict([pred._msg for pred in last_pred_copy])
+        except Exception as e:
+            print(e)
+            errors.append(str(e))
+        return result, errors
 
     def change_classification_method(self, model_opt: str):
         errors = []
@@ -107,7 +114,6 @@ class ClassificationController:
             errors.append(str(e))
         return errors
 
-    @profile
     def save_results_to_csv(self, path):
         errors = []
         filename = ''
@@ -115,21 +121,20 @@ class ClassificationController:
             if(not len(self.last_predictions)): raise Exception(config.ERROR_NO_LAST_PREDICTION)
             data = [pred.construct_prediction_for_output_file() for pred in self.last_predictions]
             data_header = self.last_predictions[0].get_header_for_output_file()
-            filename = config.OUTPUT_FILE_NAME.format(datetime=datetime.now().strftime(config.DATETIME_OUTPUT_FORMAT), extension=config.CSV_EXTENSION)
+            filename = config.OUTPUT_FILE_NAME.format(datetime=datetime.now().strftime(config.OUTPUT_DATETIME_FORMAT), extension=config.CSV_EXTENSION)
             fm.create_csv_for_predictions(path, filename, data_header, data)
         except Exception as e:
             errors.append(str(e))
             print(e)
         return errors, filename
 
-    @profile
     def save_results_to_txt(self, path):
         errors = []
         filename = ''
         try:
             if(not len(self.last_predictions)): raise Exception(config.ERROR_NO_LAST_PREDICTION)
             data = [pred.get_prediction_for_txt() for pred in self.last_predictions]
-            filename = config.OUTPUT_FILE_NAME.format(datetime=datetime.now().strftime(config.DATETIME_OUTPUT_FORMAT), extension=config.TXT_EXTENSION)
+            filename = config.OUTPUT_FILE_NAME.format(datetime=datetime.now().strftime(config.OUTPUT_DATETIME_FORMAT), extension=config.TXT_EXTENSION)
             fm.create_txt_for_predictions(path, filename, data)
         except Exception as e:
             errors.append(str(e))
@@ -140,9 +145,9 @@ class ClassificationController:
         self.last_predictions = []
 
     def _model_opt_to_model(self, model_opt):
-        if(model_opt == config.OUTPUT_BINARY_MODEL):
+        if(model_opt == uiconfig.UI_BINARY_MODEL):
             return BinaryModel()
-        elif(model_opt == config.OUTPUT_MULTILABEL_MODEL):
+        elif(model_opt == uiconfig.UI_MULTILABEL_MODEL):
             return MLModel()
 
     def _get_prediction_by_index(self, index):
@@ -151,12 +156,12 @@ class ClassificationController:
         return result[0]
     
     def _refresh_model(self):
-        if(self.model.get_model_opt() == config.OUTPUT_BINARY_MODEL):
-            self.change_classification_method(config.OUTPUT_MULTILABEL_MODEL)
-            self.change_classification_method(config.OUTPUT_BINARY_MODEL)
-        elif(self.model.get_model_opt() == config.OUTPUT_MULTILABEL_MODEL):
-            self.change_classification_method(config.OUTPUT_BINARY_MODEL)
-            self.change_classification_method(config.OUTPUT_MULTILABEL_MODEL)
+        if(self.model.get_model_opt() == uiconfig.UI_BINARY_MODEL):
+            self.change_classification_method(uiconfig.UI_MULTILABEL_MODEL)
+            self.change_classification_method(uiconfig.UI_BINARY_MODEL)
+        elif(self.model.get_model_opt() == uiconfig.UI_MULTILABEL_MODEL):
+            self.change_classification_method(uiconfig.UI_BINARY_MODEL)
+            self.change_classification_method(uiconfig.UI_MULTILABEL_MODEL)
         else:
-            self.change_classification_method(config.OUTPUT_MULTILABEL_MODEL)
-            self.change_classification_method(config.OUTPUT_BINARY_MODEL)
+            self.change_classification_method(uiconfig.UI_MULTILABEL_MODEL)
+            self.change_classification_method(uiconfig.UI_BINARY_MODEL)

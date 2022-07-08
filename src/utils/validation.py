@@ -1,8 +1,8 @@
 import pandas as pd
-from configs import config
+from configs import config, uiconfig
 
 def check_correct_model_opt(opt: str):
-    if(opt != config.OUTPUT_BINARY_MODEL and opt != config.OUTPUT_MULTILABEL_MODEL):
+    if(opt != uiconfig.UI_BINARY_MODEL and opt != uiconfig.UI_MULTILABEL_MODEL):
         raise Exception(config.ERROR_INVALID_MODEL_OPT)
 
 def check_message_is_string(msg: str):

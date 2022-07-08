@@ -1,6 +1,6 @@
 from controller.controller import ClassificationController
 from auth.authentication import AuthenticationModule 
-from configs import config
+from configs import config, uiconfig
 from classifiers.classifiers import BinaryModel, MLModel
 from domain.prediction import EmptyPrediction
 import unittest
@@ -67,7 +67,7 @@ class BusinessTestClass(unittest.TestCase):
         self.assertEqual(errors[0], config.ERROR_MAX_LENGTH_MESSAGE.format(index=result[1]._index + 1, max_length = 500))
         self.assertEqual(errors[1], config.ERROR_NOT_STRING_MESSAGE.format(index=result[3]._index + 1))
 
-    def test_2_7(self):
+    def test_2_5(self):
         controller = ClassificationController()      
         valid_message = 'hi there'
         result, errors = controller.predict([valid_message])
@@ -75,7 +75,7 @@ class BusinessTestClass(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertTrue(result[0]._prediction is not None)
     
-    def test_2_8(self):
+    def test_2_6(self):
         controller = ClassificationController()
         path = config.PROJECT_ROOT + '/testfiles/' + 'messages.csv'
         result, errors = controller.predict_messages_in_file(path)
@@ -87,7 +87,8 @@ class BusinessTestClass(unittest.TestCase):
 
     def test_3_1(self):
         controller = ClassificationController()
-        errors, _ = controller.save_results_to_csv()
+        path = config.PROJECT_ROOT + '/out/'
+        errors, _ = controller.save_results_to_csv(path)
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0], config.ERROR_NO_LAST_PREDICTION)
 
@@ -95,7 +96,24 @@ class BusinessTestClass(unittest.TestCase):
         controller = ClassificationController()
         message = 'hi there'
         _, _ = controller.predict([message])
-        errors, filename = controller.save_results_to_csv()
+        path = config.PROJECT_ROOT + '/out/'
+        errors, filename = controller.save_results_to_csv(path)
+        self.assertEqual(len(errors), 0)
+        self.assertTrue(filename != '')
+
+    def test_3_3(self):
+        controller = ClassificationController()
+        path = config.PROJECT_ROOT + '/out/'
+        errors, _ = controller.save_results_to_txt(path)
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0], config.ERROR_NO_LAST_PREDICTION)
+
+    def test_3_4(self):
+        controller = ClassificationController()
+        message = 'hi there'
+        _, _ = controller.predict([message])
+        path = config.PROJECT_ROOT + '/out/'
+        errors, filename = controller.save_results_to_txt(path)
         self.assertEqual(len(errors), 0)
         self.assertTrue(filename != '')
     
@@ -134,7 +152,7 @@ class BusinessTestClass(unittest.TestCase):
         errors = controller.correct_predictions(0, [0])
         self.assertEqual(len(errors), 0)
 
-    def test_4_5(self):
+    def test_4_4(self):
         controller = ClassificationController()
         _, _ = controller.predict(['hi there'])
         errors = controller.correct_predictions(0, [0])
@@ -148,7 +166,7 @@ class BusinessTestClass(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0], config.ERROR_ALREADY_AUTHENTICATED)
 
-    def test_5_3(self):
+    def test_5_2(self):
         controller = ClassificationController()
         errors = controller.authenticate('', 'password')
         self.assertEqual(len(errors), 1)
@@ -166,7 +184,7 @@ class BusinessTestClass(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0], config.ERROR_BLANK_PASSWORD)
     
-    def test_5_4(self):
+    def test_5_3(self):
         controller = ClassificationController()
         valid_username, valid_password = 'a'*19, 'a'*29
         valid_username_2, valid_password_2 = 'a'*20, 'a'*30
@@ -188,7 +206,7 @@ class BusinessTestClass(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0], config.ERROR_MAX_LENGTH_USERNAME.format(max_length=20))
     
-    def test_5_5(self):
+    def test_5_4(self):
         controller = ClassificationController()
         username = 'º!#=^^,.'
         password = 'password'
@@ -197,7 +215,7 @@ class BusinessTestClass(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0], config.ERROR_NOT_ALPHANUM_USERNAME)
 
-    def test_5_6(self):
+    def test_5_5(self):
         controller = ClassificationController()
         username = 'username'
         password = 'password'
@@ -206,7 +224,7 @@ class BusinessTestClass(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0], config.ERROR_AUTHENTICATION)
 
-    def test_5_7(self):
+    def test_5_6(self):
         controller = ClassificationController()
         username = 'admin1'
         password = 'admin1'
@@ -217,42 +235,42 @@ class BusinessTestClass(unittest.TestCase):
     def test_6_1(self):
         controller = ClassificationController()
         path = config.PROJECT_ROOT + '/testfiles/' + 'data.csv'
-        errors = controller.train_models(config.OUTPUT_BINARY_MODEL, path)
+        errors = controller.train_models(uiconfig.UI_BINARY_MODEL, path)
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0], config.ERROR_NOT_AUTHENTICATED)
+
+    def test_6_2(self):
+        controller = ClassificationController()
+        controller.authenticate('admin1', 'admin1')
+        path = config.PROJECT_ROOT + '/testfiles/' + 'wrong_extension.txt'
+        errors = controller.train_models(uiconfig.UI_BINARY_MODEL, path)
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0], config.ERROR_FILE_WRONG_EXTENSION)
 
     def test_6_3(self):
         controller = ClassificationController()
         controller.authenticate('admin1', 'admin1')
-        path = config.PROJECT_ROOT + '/testfiles/' + 'wrong_extension.txt'
-        errors = controller.train_models(config.OUTPUT_BINARY_MODEL, path)
-        self.assertEqual(len(errors), 1)
-        self.assertEqual(errors[0], config.ERROR_FILE_WRONG_EXTENSION)
-
-    def test_6_4(self):
-        controller = ClassificationController()
-        controller.authenticate('admin1', 'admin1')
         path = config.PROJECT_ROOT + '/testfiles/' + 'data_with_bad_predictions.csv'
-        errors = controller.train_models(config.OUTPUT_BINARY_MODEL, path)
+        errors = controller.train_models(uiconfig.UI_BINARY_MODEL, path)
         self.assertEqual(len(errors), 4)
         self.assertEqual(errors[0], config.ERROR_NOT_STRING_MESSAGE.format(index=4))
         self.assertEqual(errors[1], config.ERROR_NOT_VALID_PREDICTION.format(index=5))
         self.assertEqual(errors[2], config.ERROR_NOT_VALID_PREDICTION.format(index=6))
         self.assertEqual(errors[3], config.ERROR_MAX_LENGTH_MESSAGE.format(index=7, max_length=500))
 
-    def test_6_5(self):
+    def test_6_4(self):
         controller = ClassificationController()
         controller.authenticate('admin1', 'admin1')
         path = config.PROJECT_ROOT + '/testfiles/' + 'wrong_num_of_data.csv'
-        errors = controller.train_models(config.OUTPUT_BINARY_MODEL, path)
+        errors = controller.train_models(uiconfig.UI_BINARY_MODEL, path)
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0], config.ERROR_FILE_WRONG_NUM_OF_COLS)
     
-    def test_6_6(self):
+    def test_6_5(self):
         controller = ClassificationController()
         controller.authenticate('admin1', 'admin1')
         path = config.PROJECT_ROOT + '/testfiles/' + 'data.csv'
-        errors = controller.train_models(config.OUTPUT_BINARY_MODEL, path)
+        errors = controller.train_models(uiconfig.UI_BINARY_MODEL, path)
         self.assertEqual(len(errors), 0)
     
 
