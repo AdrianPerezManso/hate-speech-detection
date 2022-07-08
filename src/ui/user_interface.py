@@ -4,6 +4,7 @@ import functools
 import threading
 from controller.controller import ClassificationController
 from configs import config
+from utils import file_management as fm
 
 class MainWindow:
 
@@ -64,7 +65,35 @@ class MainWindow:
             window['<method_combo>'].update(disabled=True)
             window['<msg_text_area>'].update(disabled=True)
             window['<classify_btn>'].update(disabled=True)
+            window['<refresh_classify_btn>'].update(disabled=False)
             window['<msg_file_btn>'].update(disabled=True)
+
+        if(self.authenticated and len(self.controller.last_predictions)):
+            window['<correct_pred_panel>'].update(visible=True)
+            values = list(map(lambda pred: pred._index + 1, self.controller.last_predictions))
+            window['<n_msg_combo>'].update(values=values)
+        
+    def handle_refresh_classify_event(self, window, values):
+        result, _ = self.controller.redo_last_prediction()
+        output_msg_text_area = ''
+        for pred in result:
+            output_msg_text_area += pred.get_message_for_ui() + '\n'
+        window['<msg_text_area>'].update(value=output_msg_text_area)
+
+        self.last_predictions = self.controller.last_predictions
+        output = ''
+        for pred in result:
+            output += config.OUTPUT_VALID_PREDICTION_FORMAT.format(index=pred._index + 1)
+            output += ': '
+            output += pred.get_prediction_for_ui() + '\n'
+        window['<pred_text_area>'].update(value=output)
+
+        window['<save_csv_btn>'].update(disabled=False)
+        window['<save_txt_btn>'].update(disabled=False)
+        window['<method_combo>'].update(disabled=True)
+        window['<msg_text_area>'].update(disabled=True)
+        window['<classify_btn>'].update(disabled=True)
+        window['<msg_file_btn>'].update(disabled=True)
 
         if(self.authenticated and len(self.controller.last_predictions)):
             window['<correct_pred_panel>'].update(visible=True)
@@ -78,6 +107,7 @@ class MainWindow:
         window['<msg_text_area>'].update(value='', disabled=False)
         window['<pred_text_area>'].update(value='')
         window['<classify_btn>'].update(disabled=True)
+        window['<refresh_classify_btn>'].update(disabled=True)
         window['<msg_file_btn>'].update(disabled=False)
         window['<msg_file_txt>'].update(visible=False)
         window['<method_combo>'].update(disabled=False)
@@ -151,7 +181,6 @@ class MainWindow:
         fn_end_msg = 'Prediction successfully corrected'
         TrainingConfirmationWindow(self.controller, fn, title, msg, fn_end_msg).run()
 
-
     def handle_cancel_correct_pred_event(self, window, values):
         window['<n_msg_combo>'].update(value='')
         window['<bin_correct_pred_combo>'].update(set_to_index=0)
@@ -166,6 +195,10 @@ class MainWindow:
         window['<second_correct_pred_panel_ml>'].update(visible=False)
         window['<third_correct_pred_panel_ml>'].update(visible=False)
         window['<submit_correct_pred_btn>'].update(disabled=True)
+    
+    def handle_submit_help_event(self, window, values):
+        path = config.PROJECT_ROOT + '/help/' + 'submit_messages.txt'
+        HelpWindow(path).run()
     
     def _message_for_confirmation_dialog(self, msg_index, new_pred):
         result = 'Operation:\t Predict messages\n'
@@ -192,6 +225,8 @@ class MainWindow:
                 self.handle_message_file_submission_event(window, values)
             if event == '<classify_btn>':
                 self.handle_classify_event(window, values)
+            if event == '<refresh_classify_btn>':
+                self.handle_refresh_classify_event(window, values)
             if event == '<clear_btn>':
                 self.handle_clear_event(window, values)
             if event == '<save_csv_btn>':
@@ -208,6 +243,8 @@ class MainWindow:
                 self.handle_submit_correct_pred_event(window, values)
             if event == '<cancel_correct_pred_btn>':
                 self.handle_cancel_correct_pred_event(window, values)
+            if event == '<help_btn>':
+                self.handle_submit_help_event(window, values)
 
 
     def run(self):
@@ -215,13 +252,15 @@ class MainWindow:
            [sg.Text('Write a message', expand_y=False, font='25')],
            [sg.Multiline(expand_x=True, expand_y = True, enable_events=True, k='<msg_text_area>')],
            [sg.Button('Classify', expand_x = True, expand_y=False, enable_events=True, k='<classify_btn>', disabled=True, bind_return_key=True), 
-            sg.Button('Clear All', expand_x = True, expand_y=False, enable_events=True, k='<clear_btn>')]
+            sg.Button('Clear All', expand_x = True, expand_y=False, enable_events=True, k='<clear_btn>'),
+            sg.Button('Refresh', enable_events=True, k='<refresh_classify_btn>', disabled=True)]
         ]
         up_panel_medium_panel = [
            [sg.Text(expand_y=True, visible=False)],
            [sg.Text('Select classification method', font='25')],
            [sg.Combo(['Binary', 'Itemized'], default_value='Binary', readonly=True, enable_events=True, k='<method_combo>')],
-           [sg.FileBrowse('Submit messages file', enable_events=True, k='<msg_file_btn>', file_types=(("CSV", "*.csv"),))],
+           [sg.FileBrowse('Submit messages file', enable_events=True, k='<msg_file_btn>', file_types=(("CSV", "*.csv"),)),
+           sg.Button('ⓘ', font='30', k='<help_btn>')],
            [sg.Text('...Submitted data.csv', k='<msg_file_txt>', visible=False)],
            [sg.Text(expand_y=True, visible=False)],
         ]
@@ -468,6 +507,10 @@ class TrainingWindow:
             window['<example_txt>'].update('Example for a row in the file: 0,”he was a boy”')
         if(values['<method_combo>'] == 'Itemized'):
             window['<example_txt>'].update('Example for a row in the file: “this is a message”,0,0,0,0,0,0')
+    
+    def handle_train_help_event(self, window, values):
+        path = config.PROJECT_ROOT + '/help/' + 'train_data.txt'
+        HelpWindow(path).run()
 
     def handle_events(self, window):
         while True:
@@ -480,6 +523,8 @@ class TrainingWindow:
                 self.handle_train_submission_event(window, values)
             if event == '<method_combo>':
                 self.handle_method_combo_event(window, values)
+            if event == '<help_btn>':
+                self.handle_train_help_event(window, values)
 
     def run(self):
         f_left_panel = [
@@ -513,7 +558,8 @@ class TrainingWindow:
         ]
 
         third_panel = [
-            sg.Text('Example for a row in the file: 0,”he was a boy”', text_color='light gray', expand_y=True, expand_x=True, justification='c', k='<example_txt>')
+            sg.Text('Example for a row in the file: 0,”he was a boy”', text_color='light gray', expand_y=True, expand_x=True, justification='c', k='<example_txt>'),
+            sg.Button('ⓘ', font='30', k='<help_btn>')
         ]
 
         fi_left_panel = [
@@ -634,6 +680,28 @@ class DialogWindow:
         ]
         
         window = sg.Window(title=self.title, layout=[layout], size=(424, 120), modal=True, finalize=True)
+        while True:
+            event, values = window.read()
+            if event == 'Exit' or event == sg.WINDOW_CLOSED or event == '<ok_btn>':
+                break
+        window.close()
+
+class HelpWindow:
+
+    def __init__(self, text_file_path):
+        self.text = fm.file_to_string(text_file_path)
+
+    def run(self):
+        elements = [
+            [sg.Text(self.text, expand_y=True)],
+            [sg.Button('OK', enable_events=True, k='<ok_btn>')]
+        ]
+
+        layout = [
+            sg.Column(elements, expand_x = True, expand_y = True, element_justification='c')
+        ]
+        
+        window = sg.Window(title='Help', layout=[layout], size=(636, 330), modal=True, finalize=True)
         while True:
             event, values = window.read()
             if event == 'Exit' or event == sg.WINDOW_CLOSED or event == '<ok_btn>':

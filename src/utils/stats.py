@@ -2,7 +2,7 @@ import pandas as pd
 
 from sklearn import metrics
 
-def get_stats_for_data(classifier, X, y, make_report=False, multilabel=False, mllabels=[]):
+def get_stats_for_data(classifier, X, y, e_time=0, make_report=False, multilabel=False, mllabels=[]):
     score = classifier.score(X, y)
     print("L2-sag")
     print("Accuracy:", score)
@@ -12,9 +12,12 @@ def get_stats_for_data(classifier, X, y, make_report=False, multilabel=False, ml
     y_pred = classifier.predict(X)
 
     print('Accuracy:', metrics.accuracy_score(y, y_pred))
-    print('F1 Score:', metrics.f1_score(y, y_pred, average='weighted'))
     print('Precision:', metrics.average_precision_score(y, y_pred, average='weighted'))
     print('Recall:', metrics.recall_score(y, y_pred,average='weighted'))
+    print('F1 Score:', metrics.f1_score(y, y_pred, average='weighted')) 
+    print('Hamming loss: ',metrics.hamming_loss(y, y_pred))
+    print('Jaccard score: ',metrics.jaccard_score(y, y_pred, average='weighted'))
+    print('Execution time: ', e_time)
     if(make_report):
         print(metrics.classification_report(y, y_pred, target_names=labels))
     

@@ -29,3 +29,8 @@ def create_txt_for_predictions(path, filename, data):
         for row in data:
             f.write(row + '\n')
 
+def file_to_string(path):
+    with open(path, 'r', encoding='utf8') as f:
+        data = f.read()
+    return data
+

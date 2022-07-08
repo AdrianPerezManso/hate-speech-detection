@@ -6,8 +6,6 @@ from domain.prediction import EmptyPrediction
 import unittest
 import time
 
-from src.ui.user_interface import MainWindow
-
 
 class BusinessTestClass(unittest.TestCase):
 
@@ -256,97 +254,7 @@ class BusinessTestClass(unittest.TestCase):
         path = config.PROJECT_ROOT + '/testfiles/' + 'data.csv'
         errors = controller.train_models(config.OUTPUT_BINARY_MODEL, path)
         self.assertEqual(len(errors), 0)
-
-class UITestClass(unittest.TestCase):
-
-    def test_correct_initialization(self):
-        controller = ClassificationController()
-        main_window = MainWindow(controller)
-        self.assertTrue(main_window.controller is not None)
-        self.assertTrue(isinstance(main_window.controller, ClassificationController))
-        self.assertEqual(self.uploaded_file, '')
-        self.assertFalse(self.authenticated)
-        self.assertEqual(self.last_predictions, 0)
     
-class PerformanceTestClass(unittest.TestCase):
-
-    def test_peformance_1_1(self):
-        controller = ClassificationController()
-        start = time.time()
-        controller.predict('hi there')
-        end = time.time()
-        e_time = end - start
-        self.assertTrue(e_time < 1)
-    
-    def test_peformance_1_2(self):
-        controller = ClassificationController()
-        path = config.PROJECT_ROOT + '/testfiles/performance/' + 'messages.csv'
-        start = time.time()
-        controller.predict_messages_in_file(path)
-        end = time.time()
-        e_time = end - start
-        self.assertTrue(e_time < 1 * 1000)
-
-    def test_peformance_1_3(self):
-        controller = ClassificationController()
-        start = time.time()
-        controller.authenticate('admin1', 'admin1')
-        end = time.time()
-        e_time = end - start
-        self.assertTrue(e_time < 3)
-    
-    def test_peformance_1_4(self):
-        controller = ClassificationController()
-        start = time.time()
-        path = config.PROJECT_ROOT + '/testfiles/performance/' + 'messages.csv'
-        controller.predict_messages_in_file(path)
-        start = time.time()
-        controller.save_results_to_csv()
-        end = time.time()
-        e_time = end - start
-        self.assertTrue(e_time < 10)
-
-    def test_peformance_1_5(self):
-        controller = ClassificationController()
-        controller.authenticate('admin1', 'admin1')
-        controller.predict('hi there')
-        start = time.time()
-        controller.correct_predictions(0, [0])
-        end = time.time()
-        e_time = end - start
-        self.assertTrue(e_time < 300)
-
-    def test_peformance_1_6(self):
-        controller = ClassificationController()
-        controller.authenticate('admin1', 'admin1')
-        controller.change_classification_method('Itemized')
-        controller.predict('hi there')
-        start = time.time()
-        controller.correct_predictions(0, [0,0,0,0,0,0])
-        end = time.time()
-        e_time = end - start
-        self.assertTrue(e_time < 600)
-    
-    def test_peformance_1_7(self):
-        controller = ClassificationController()
-        controller.authenticate('admin1', 'admin1')
-        path = config.PROJECT_ROOT + '/testfiles/performance/' + 'bin_data.csv'
-        start = time.time()
-        controller.train_models('Binary', path)
-        end = time.time()
-        e_time = end - start
-        self.assertTrue(e_time < 300)
-    
-    def test_peformance_1_8(self):
-        controller = ClassificationController()
-        controller.authenticate('admin1', 'admin1')
-        path = config.PROJECT_ROOT + '/testfiles/performance/' + 'ml_data.csv'
-        start = time.time()
-        controller.train_models('Itemized', path)
-        end = time.time()
-        e_time = end - start
-        self.assertTrue(e_time < 600)
-
 
 if __name__ == "__main__":
     unittest.main()

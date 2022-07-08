@@ -1,6 +1,6 @@
 import pickle
 import pandas as pd
-import os
+import time
 
 from configs import config
 from abc import ABC, abstractmethod
@@ -9,8 +9,10 @@ from domain.prediction import Prediction, BinaryPrediction, MLPrediction
 from utils import nlp, stats, file_management as fm, validation
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import SGDClassifier
 from sklearn.multioutput import MultiOutputClassifier
+from sklearn_instrumentation import SklearnInstrumentor
+from sklearn_instrumentation.instruments.memory_profiler import MemoryProfiler 
 
 class Model(ABC):
     @abstractmethod
@@ -46,22 +48,15 @@ class BinaryModel(Model):
 
     def predict(self, msg: str, index: int):
         result = self.classifier.predict(self._transform_data([msg]))[0]
+        #print(self.classifier.predict_proba(self._transform_data([msg])))
         return BinaryPrediction(msg, index, result)
     
     def fit_new_data(self, data: pd.DataFrame):
         validation.check_num_cols(data, 2)
         y_new, x_new = data.iloc[:,0].values, data.iloc[:,1].values
         y_new, x_new, errors = self._filter_invalid_data(y_new, x_new)
-        df_new = pd.DataFrame(data={
-                        config.BINARY_TARGET_VALUE: [int(y) for y in y_new], 
-                        config.MESSAGE_VALUE: x_new
-                        })
-        df_origin =  fm.load_csv_as_df(config.BINARY_DATASET_DIR, 
-                        header=0, 
-                        column_names=[config.ID_VALUE, config.BINARY_TARGET_VALUE, config.MESSAGE_VALUE], 
-                        usecols=[config.BINARY_TARGET_VALUE, config.MESSAGE_VALUE])
-        df = pd.concat([df_origin, df_new])
-        self._train(df)
+        X_new = self._transform_data(x_new)
+        self.classifier.partial_fit(X_new, y_new)
         return errors
     
     def fit_prediction(self, prediction: BinaryPrediction):
@@ -97,41 +92,35 @@ class BinaryModel(Model):
         fm.dump_object(config.BINARY_MODEL_DIR, classifier)
         fm.dump_object(config.BINARY_VECT_DIR, vectorizer)
 
-    def _train(self, df_new=None):
-        if(df_new is not None):
-            df = df_new
-        else:
-            df = fm.load_csv_as_df(config.BINARY_DATASET_DIR, 
-                    header=0, 
-                    column_names=[config.ID_VALUE, config.BINARY_TARGET_VALUE, config.MESSAGE_VALUE], 
-                    usecols=[config.BINARY_TARGET_VALUE, config.MESSAGE_VALUE])
+    def _train(self):
+        start = time.time()
+        df = fm.load_csv_as_df(config.BINARY_DATASET_DIR, 
+                header=0, 
+                column_names=[config.ID_VALUE, config.BINARY_TARGET_VALUE, config.MESSAGE_VALUE], 
+                usecols=[config.BINARY_TARGET_VALUE, config.MESSAGE_VALUE])
 
         x = df[config.MESSAGE_VALUE].values
         y = df[config.BINARY_TARGET_VALUE].values
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.20, random_state=32)
 
-        if(self.vectorizer):
-            vectorizer = self.vectorizer
-        else:
-            vectorizer = CountVectorizer(strip_accents=config.UNICODE, 
-                                        ngram_range=(1,2), 
-                                        stop_words=nlp.get_stopwords(), 
-                                        preprocessor=nlp.clean_message, 
-                                        tokenizer=nlp.get_tokenizer_function(), 
-                                        binary=True)
 
+        vectorizer = CountVectorizer(strip_accents=config.UNICODE, 
+                                    ngram_range=(1,2), 
+                                    stop_words=nlp.get_stopwords(), 
+                                    preprocessor=nlp.clean_message, 
+                                    tokenizer=nlp.get_tokenizer_function(), 
+                                    binary=True)
+        
         vectorizer.fit(x_train)
         X_train = vectorizer.transform(x_train)
         X_test = vectorizer.transform(x_test)
         
-        if(self.classifier):
-            classifier = self.classifier
-        else:
-            classifier = LogisticRegression(solver='sag', max_iter=100000)
-
+        classifier = SGDClassifier(loss='modified_huber', max_iter=100000)
         classifier.fit(X_train, y_train)
+        end = time.time()
+        e_time = end - start
         self._save_model(classifier, vectorizer)
-        stats.get_stats_for_data(classifier, X_test, y_test, make_report=True)
+        stats.get_stats_for_data(classifier, X_test, y_test, e_time=e_time, make_report=True)
 
 
 
@@ -153,6 +142,7 @@ class MLModel(Model):
     
     def predict(self, msg: str, index: int):
         prediction = self.classifier.predict(self._transform_data([msg]))[0]
+        #print(self.classifier.predict_proba(self._transform_data([msg])))
         return MLPrediction(msg, index, prediction)
     
     def fit_new_data(self, data: pd.DataFrame):
@@ -160,26 +150,8 @@ class MLModel(Model):
         validation.check_num_cols(data, 7)
         x_new, y_new = data.iloc[:,0].values, data.iloc[:,1:].values
         x_new, y_new, errors = self._filter_invalid_data(y_new, x_new)
-        df_new = pd.DataFrame(data={
-                        config.MESSAGE_VALUE: x_new,
-                        config.TOXIC_LABEL: [row[config.TOXIC_LABEL_INDEX] for row in y_new],
-                        config.SEVERE_TOXIC_LABEL: [row[config.SEVERE_TOXIC_LABEL_INDEX] for row in y_new],
-                        config.OBSCENE_LABEL: [row[config.OBSCENE_LABEL_INDEX] for row in y_new],
-                        config.THREAT_LABEL: [row[config.THREAT_LABEL_INDEX] for row in y_new],
-                        config.INSULT_LABEL: [row[config.INSULT_LABEL_INDEX] for row in y_new],
-                        config.IDENTITY_HATE_LABEL: [row[config.IDENTITY_HATE_LABEL_INDEX] for row in y_new]
-                        })
-        df_origin = fm.load_csv_as_df(config.MULTILABEL_TRAIN_DATASET_DIR, 
-                    header=0, 
-                    column_names=[config.ID_VALUE, config.MESSAGE_VALUE, 
-                                  config.TOXIC_LABEL, config.SEVERE_TOXIC_LABEL, config.OBSCENE_LABEL,
-                                  config.THREAT_LABEL, config.INSULT_LABEL, config.IDENTITY_HATE_LABEL], 
-                    usecols=[config.MESSAGE_VALUE, 
-                             config.TOXIC_LABEL, config.SEVERE_TOXIC_LABEL, config.OBSCENE_LABEL,
-                             config.THREAT_LABEL, config.INSULT_LABEL, config.IDENTITY_HATE_LABEL])
-        df = pd.concat([df_origin, df_new])
-        print(df)
-        self._train(df)
+        X_new = self._transform_data(x_new)
+        self.classifier.partial_fit(X_new, y_new)
         return errors
     
     def fit_prediction(self, prediction: MLPrediction):
@@ -218,18 +190,16 @@ class MLModel(Model):
                 errors.append(str(e))
         return x_filtered, y_filtered, errors
 
-    def _train(self, df_new=None):
-        if(df_new is not None):
-            df_train = df_new
-        else:
-            df_train = fm.load_csv_as_df(config.MULTILABEL_TRAIN_DATASET_DIR, 
-                    header=0, 
-                    column_names=[config.ID_VALUE, config.MESSAGE_VALUE, 
-                                  config.TOXIC_LABEL, config.SEVERE_TOXIC_LABEL, config.OBSCENE_LABEL,
-                                  config.THREAT_LABEL, config.INSULT_LABEL, config.IDENTITY_HATE_LABEL], 
-                    usecols=[config.MESSAGE_VALUE, 
-                             config.TOXIC_LABEL, config.SEVERE_TOXIC_LABEL, config.OBSCENE_LABEL,
-                             config.THREAT_LABEL, config.INSULT_LABEL, config.IDENTITY_HATE_LABEL])
+    def _train(self):
+        start = time.time()
+        df_train = fm.load_csv_as_df(config.MULTILABEL_TRAIN_DATASET_DIR, 
+                header=0, 
+                column_names=[config.ID_VALUE, config.MESSAGE_VALUE, 
+                              config.TOXIC_LABEL, config.SEVERE_TOXIC_LABEL, config.OBSCENE_LABEL,
+                              config.THREAT_LABEL, config.INSULT_LABEL, config.IDENTITY_HATE_LABEL], 
+                usecols=[config.MESSAGE_VALUE, 
+                         config.TOXIC_LABEL, config.SEVERE_TOXIC_LABEL, config.OBSCENE_LABEL,
+                         config.THREAT_LABEL, config.INSULT_LABEL, config.IDENTITY_HATE_LABEL])
             
         df_test = fm.load_csv_as_df(config.MULTILABEL_TEST_DATASET_DIR, header=0, column_names=[config.ID_VALUE, config.MESSAGE_VALUE])
         df_test_labels = fm.load_csv_as_df(config.MULTILABEL_TEST_LABELS_DIR, header=0)
@@ -246,28 +216,24 @@ class MLModel(Model):
         y_train = df_train[[config.TOXIC_LABEL, config.SEVERE_TOXIC_LABEL, config.OBSCENE_LABEL,
                             config.THREAT_LABEL, config.INSULT_LABEL, config.IDENTITY_HATE_LABEL]].values
         y_test = df_test[[config.TOXIC_LABEL, config.SEVERE_TOXIC_LABEL, config.OBSCENE_LABEL,
-                            config.THREAT_LABEL, config.INSULT_LABEL, config.IDENTITY_HATE_LABEL]].values
-        if(self.vectorizer):
-            vectorizer = self.vectorizer
-        else:
-            vectorizer = TfidfVectorizer(ngram_range=(1,1), 
-                                            stop_words=nlp.get_stopwords(), 
-                                            preprocessor=nlp.clean_message, 
-                                            tokenizer=nlp.get_tokenizer_function(), 
-                                            min_df=25)
+                          config.THREAT_LABEL, config.INSULT_LABEL, config.IDENTITY_HATE_LABEL]].values
+        
+        vectorizer = TfidfVectorizer(ngram_range=(1,1), 
+                                     stop_words=nlp.get_stopwords(), 
+                                     preprocessor=nlp.clean_message, 
+                                     tokenizer=nlp.get_tokenizer_function(), 
+                                     min_df=25)
 
         vectorizer.fit(x_train)
         X_train = vectorizer.transform(x_train)
         X_test = vectorizer.transform(x_test)
         
-        if(self.classifier):
-            classifier = self.classifier
-        else:
-            classifier = MultiOutputClassifier(LogisticRegression(solver='sag', max_iter=100000))
-
+        classifier = MultiOutputClassifier(SGDClassifier(loss='modified_huber', max_iter=100000))
         classifier.fit(X_train, y_train)
+        end = time.time()
+        e_time = end - start
         self._save_model(classifier, vectorizer)
-        stats.get_stats_for_data(classifier, X_test, y_test, multilabel=True, 
+        stats.get_stats_for_data(classifier, X_test, y_test, e_time=e_time, multilabel=True, 
                                 mllabels=[config.TOXIC_LABEL, config.SEVERE_TOXIC_LABEL, config.OBSCENE_LABEL, 
                                         config.THREAT_LABEL, config.INSULT_LABEL, config.IDENTITY_HATE_LABEL])
 

@@ -16,6 +16,7 @@ class ClassificationController:
         self.authenticated = False
         self.last_predictions = []
 
+    @profile
     def predict(self, messages: list[str]):
         result, errors = [], []
         for index, msg in enumerate(messages):
@@ -30,6 +31,7 @@ class ClassificationController:
                 errors.append(str(e))
         return result, errors
 
+    @profile
     def predict_messages_in_file(self, msgs_path: str):
         result, errors = [], []
         try:
@@ -42,6 +44,8 @@ class ClassificationController:
             errors.append(str(e))
         return result, errors
 
+    def redo_last_prediction(self):
+        return self.predict([pred._msg for pred in self.last_predictions])
 
     def change_classification_method(self, model_opt: str):
         errors = []
@@ -87,7 +91,6 @@ class ClassificationController:
             errors.append(str(e))
         return errors
 
-
     def train_models(self, model_opt: str, file_path: str):
         errors = []
         try:
@@ -104,6 +107,7 @@ class ClassificationController:
             errors.append(str(e))
         return errors
 
+    @profile
     def save_results_to_csv(self, path):
         errors = []
         filename = ''
@@ -118,6 +122,7 @@ class ClassificationController:
             print(e)
         return errors, filename
 
+    @profile
     def save_results_to_txt(self, path):
         errors = []
         filename = ''

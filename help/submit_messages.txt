@@ -1,0 +1,3 @@
+-	The file must have a .csv extension.
+-	The file must contain a message per row.
+-	The file must enclose each message between double quotes (“”).
