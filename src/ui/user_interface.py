@@ -1,9 +1,8 @@
 import PySimpleGUI as sg
 import textwrap
 import functools
-import threading
 from controller.controller import ClassificationController
-from configs import config, uiconfig
+from configs import uiconfig
 from utils import file_management as fm
 
 class MainWindow:
@@ -14,9 +13,6 @@ class MainWindow:
         self.authenticated = False
         self.last_predictions = []
     
-    def get_element_by_key(self, window, key):
-        return window[key]
-
     def handle_message_text_area_event(self, window, values):
         disable_messages_file_btn = len(values[uiconfig.UI_KEY_MSG_TXT_AREA].strip()) > 0
         window[uiconfig.UI_KEY_MSG_FILE_BTN].update(disabled=disable_messages_file_btn)
@@ -174,6 +170,8 @@ class MainWindow:
             prediction_strings.append(values[uiconfig.UI_KEY_INSULT_CORRECT_PRED_COMBO])
             prediction_strings.append(values[uiconfig.UI_KEY_IDENTITY_HATE_CORRECT_PRED_COMBO])
 
+        window[uiconfig.UI_KEY_METHOD_COMBO].update(disabled=True)
+
         fn = functools.partial(self.controller.correct_predictions, msg_index - 1, prediction_values)
         title = uiconfig.UI_TITLE_CORRECT_PREDICTIONS
         msg = self._message_for_confirmation_dialog(msg_index, prediction_strings)
@@ -200,11 +198,7 @@ class MainWindow:
         HelpWindow(path).run()
     
     def _message_for_confirmation_dialog(self, msg_index, new_pred):
-        # result = 'Operation:\t Predict messages\n'
         pred = self._get_message_by_index(msg_index - 1)
-        # result += 'Message {msg_index}:\t "{msg}"\n'.format(msg_index=msg_index, msg=pred._msg)
-        # result += 'Old prediction:\t {old_value}\n'.format(old_value=pred.get_prediction_for_ui())
-        # result += 'New prediction:\t {new_value}\n'.format(new_value=new_pred)
         result = uiconfig.UI_MESSAGE_CONFIRMATION_CORRECT_PREDICTION.format(index=msg_index, msg=pred._msg, 
                                                                             old_value=pred.get_prediction_for_ui(), new_value=new_pred)
         return result
@@ -390,9 +384,6 @@ class AuthenticationWindow:
         self.controller = controller
         self.authenticated = False
 
-    def get_element_by_key(self, window, key):
-        return window[key]
-
     def handle_submission_event(self, window, values):
         username = values[uiconfig.UI_KEY_USR_IN]
         password = values[uiconfig.UI_KEY_PWD_IN]
@@ -501,9 +492,6 @@ class TrainingWindow:
     def __init__(self, controller: ClassificationController):
         self.controller = controller
 
-    def get_element_by_key(self, window, key):
-        return window[key]
-
     def handle_file_submission_event(self, window, values):
         file = values[uiconfig.UI_KEY_FINE_IN]
         disable_submit = len(file.strip()) == 0
@@ -532,9 +520,6 @@ class TrainingWindow:
         HelpWindow(path).run()
 
     def _message_for_confirmation_dialog(self, model_opt, file):
-        # result = 'Operation:\t Train model\n'
-        # result += 'Model to train:\t {model_opt} model\n'.format(model_opt=model_opt)
-        # result += 'Data:\t {file}'.format(file=file)
         result = uiconfig.UI_MESSAGE_CONFIRMATION_TRAIN_MODEL.format(model_opt=model_opt, file=file)
         return result
 
@@ -631,9 +616,6 @@ class TrainingConfirmationWindow:
         self.title = title
         self.final_msg = final_msg
 
-    def get_element_by_key(self, window, key):
-        return window[key]
-
     def handle_confirmation_event(self, window, values):
         window[uiconfig.UI_KEY_CANCEL_BTN].update(visible=False)
         window[uiconfig.UI_KEY_CONFIRM_BTN].update(visible=False)
@@ -642,7 +624,6 @@ class TrainingConfirmationWindow:
         window[uiconfig.UI_KEY_MSG_TXT].update(value=uiconfig.UI_MESSAGE_PERFORMING_OPERATION)
         window.refresh()
         errors = self.controller_fn()
-        #window[uiconfig.UI_KEY_MSG_TXT].update(font='30')
         if(len(errors)):
             window[uiconfig.UI_KEY_MSG_TXT].update(self._build_error_message(errors))
         else:
@@ -682,9 +663,6 @@ class DialogWindow:
     def __init__(self, title, messages=[]):
         self.title = title
         self.messages = messages       
-
-    def get_element_by_key(self, window, key):
-        return window[key]
 
     def _get_message(self):
         return self._build_messages_message(self.messages)

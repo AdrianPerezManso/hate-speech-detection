@@ -1,4 +1,3 @@
-import numpy as np
 from datetime import datetime
 from configs import config, uiconfig
 from classifiers.classifiers import Model, BinaryModel, MLModel

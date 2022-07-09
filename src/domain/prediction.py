@@ -1,5 +1,4 @@
 from configs import config, uiconfig
-from utils import validation
 from abc import ABC, abstractmethod
 
 class Prediction(ABC):
@@ -29,7 +28,7 @@ class Prediction(ABC):
 
 
 class BinaryPrediction(Prediction):
-    def __init__(self, msg: str, index: int,  prediction: str):
+    def __init__(self, msg: str, index: int,  prediction: int):
         super(BinaryPrediction, self).__init__(msg, index)
         self._prediction = prediction
 
@@ -54,7 +53,7 @@ class BinaryPrediction(Prediction):
 
 
 class MLPrediction(Prediction):
-    def __init__(self, msg: str, index: int, prediction: list[int]):
+    def __init__(self, msg: str, index: int, prediction: list[list[int]]):
         super(MLPrediction, self).__init__(msg, index)
         self._prediction = prediction
 

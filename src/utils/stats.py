@@ -1,5 +1,4 @@
 import pandas as pd
-
 from sklearn import metrics
 
 def get_stats_for_data(classifier, X, y, e_time=0, make_report=False, multilabel=False, mllabels=[]):

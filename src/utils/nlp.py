@@ -1,5 +1,4 @@
 import nltk
-import pickle
 import wordsegment as ws
 
 from nltk.stem import SnowballStemmer

@@ -1,7 +1,6 @@
 import sqlite3
 import os
 from configs import config
-
 from sqlite3 import Error
 
 class UserRepository:

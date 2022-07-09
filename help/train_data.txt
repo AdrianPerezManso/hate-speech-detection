@@ -1,16 +1,16 @@
--	The file must have .csv extension.
--	The file must contain only the message and the prediction values.
--	The message must be enclosed between double quotes (“”).
--	The file must contain columns separated by commas. The number of columns depends on the model to be trained.
-    o	    The binary model receives one column for the message and another column for the value of the prediction. This value must be 0 or 1.
-    o	    The itemized model receives one column for the message and another six for the targets. The target values must be 0 or 1.
--	The format for each row must be the following:
-    o	    For the binary model: <prediction_value>,”<message>”. For instance: 0,”he was a boy”.
-    o	    For the itemized model: “<message>”,<1>,<2>,<3>,<4>,<5>,<6>:
-        -	    1: Toxic value.
-        -	    2: Severe toxic value.
-        -	    3: Obscene value.
-        -	    4: Threat value.
-        -	    5: Insult value.
-        -	    6: Identity hate value.
-    o	For instance: “this is a message”,0,0,0,0,0,0.
+- The file must have .csv extension.
+- The file must contain only the message and the prediction values.
+- The message must be enclosed between double quotes (“”).
+- The file must contain columns separated by commas. The number of columns depends on the model to be trained.
+    • The binary model receives one column for the message and another column for the value of the prediction. This value must be 0 or 1.
+    • The itemized model receives one column for the message and another six for the targets. The target values must be 0 or 1.
+- The format for each row must be the following:
+    • For the binary model: <prediction_value>,”<message>”. For instance: 0,”he was a boy”.
+    • For the itemized model: “<message>”,<1>,<2>,<3>,<4>,<5>,<6>:
+        - 1: Toxic value.
+        - 2: Severe toxic value.
+        - 3: Obscene value.
+        - 4: Threat value.
+        - 5: Insult value.
+        - 6: Identity hate value.
+    • For instance: “this is a message”,0,0,0,0,0,0.

@@ -4,7 +4,6 @@ from configs import config, uiconfig
 from classifiers.classifiers import BinaryModel, MLModel
 from domain.prediction import EmptyPrediction
 import unittest
-import time
 
 
 class BusinessTestClass(unittest.TestCase):
