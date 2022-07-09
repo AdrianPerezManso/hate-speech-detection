@@ -1,5 +1,6 @@
-from configs import config, uiconfig
+from configs import config, uiconfig, logconfig
 from abc import ABC, abstractmethod
+import logging
 
 class Prediction(ABC):
     
@@ -31,6 +32,7 @@ class BinaryPrediction(Prediction):
     def __init__(self, msg: str, index: int,  prediction: int):
         super(BinaryPrediction, self).__init__(msg, index)
         self._prediction = prediction
+        logging.info(logconfig.LOG_BIN_PREDICTION_INIT.format(index=index, msg=msg, pred=prediction))
 
     def get_prediction(self):
         return self._prediction
@@ -56,6 +58,7 @@ class MLPrediction(Prediction):
     def __init__(self, msg: str, index: int, prediction: list[list[int]]):
         super(MLPrediction, self).__init__(msg, index)
         self._prediction = prediction
+        logging.info(logconfig.LOG_ML_PREDICTION_INIT.format(index=index, msg=msg, pred=prediction))
 
     def get_prediction(self):
         return self._prediction

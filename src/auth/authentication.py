@@ -1,5 +1,7 @@
 from auth.user_repository import UserRepository
+from configs import logconfig
 import bcrypt
+import logging
 
 
 class AuthenticationModule:
@@ -8,13 +10,17 @@ class AuthenticationModule:
     """
     def __init__(self):
         self.repository = UserRepository()
+        logging.info(logconfig.LOG_AUTHENTICATE_INIT)
 
     def authenticate(self, usr: str, pwd: str):
         """
         Authentication method
         """
         password = self.repository.get_password_by_username(usr)
-        if (not password): return False
+        logging.debug(logconfig.LOG_AUTHENTICATE_EXECUTED_QUERY)
+        if (not password):
+            logging.info(logconfig.LOG_AUTHENTICATE_FAIL)
+            return False
         return bcrypt.checkpw(pwd.encode('utf-8'), password.encode('utf-8'))
 
 

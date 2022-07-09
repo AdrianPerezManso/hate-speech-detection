@@ -60,6 +60,7 @@ ID_VALUE = 'id'
 
 
 # NLP
+HASHTAG = '#'
 LANGUAGE = 'english'
 REGEX_TOKENIZER = '#\w+|&#[0-9]+;|http\S+|@?\w+'
 REGEX_AT = '@'
@@ -102,5 +103,8 @@ TXT_EXTENSION = '.txt'
 OUTPUT_TXT_FILE = 'The message "{msg}" has been predicted as {pred}'
 OUTPUT_MESSAGE = '"{message}"'
 OUTPUT_DATETIME_FORMAT = '%Y%m%d_%H%M%S'
-OUTPUT_FILE_NAME = 'predictions_{datetime}{extension}' 
+OUTPUT_FILE_NAME = 'predictions_{datetime}{extension}'
+
+# Stats
+STATS_LABELS = ['0', '1']
 

@@ -301,7 +301,7 @@ class MainWindow:
         down_panel_left_panel = [
            [sg.Text(uiconfig.UI_LABEL_PRED_TXT_AREA, font='25')],
            [sg.Multiline(expand_x = True, expand_y = True, disabled=True, k=uiconfig.UI_KEY_PRED_TXT_AREA)],
-            save_buttons_panel
+           save_buttons_panel
         ]
 
         cp_up_first = [
@@ -506,8 +506,6 @@ class TrainingWindow:
         fn_end_msg = uiconfig.UI_MESSAGE_TRAINING_SUCCESS
         TrainingConfirmationWindow(self.controller, fn, title, msg, fn_end_msg).run()
         window.write_event_value(uiconfig.UI_KEY_EXIT, None)
-
-    
     
     def handle_method_combo_event(self, window, values):
         if(values[uiconfig.UI_KEY_METHOD_COMBO] == uiconfig.UI_BINARY_MODEL):
@@ -649,7 +647,9 @@ class TrainingConfirmationWindow:
             [sg.Text(self._get_wrapped_msg(), expand_y=True, font='25', k=uiconfig.UI_KEY_MSG_TXT)],
             [sg.Text(expand_y=True, visible=False)],
             [sg.Text(uiconfig.UI_LABEL_CONFIRM_BTN, k=uiconfig.UI_KEY_CONFIRM_TXT)],
-            [sg.Button(uiconfig.UI_CONFIRM_BTN, k=uiconfig.UI_KEY_CONFIRM_BTN), sg.Button(uiconfig.UI_CANCEL_BTN, k=uiconfig.UI_KEY_CANCEL_BTN), sg.Button('OK', k=uiconfig.UI_KEY_OK_BTN, visible=False, disabled=True)]
+            [sg.Button(uiconfig.UI_CONFIRM_BTN, k=uiconfig.UI_KEY_CONFIRM_BTN), 
+             sg.Button(uiconfig.UI_CANCEL_BTN, k=uiconfig.UI_KEY_CANCEL_BTN), 
+             sg.Button(uiconfig.UI_OK_BTN, k=uiconfig.UI_KEY_OK_BTN, visible=False, disabled=True)]
         ]
 
         layout = [
@@ -671,7 +671,7 @@ class DialogWindow:
         if(len(messages) > 1):
             return '\n'.join(messages)
         else:
-            return '\n'.join(textwrap.wrap(''.join(messages), 60))
+            return '\n'.join(textwrap.wrap(''.join(messages), 40))
 
     def _get_messages_len(self):
         return len(self.messages)
