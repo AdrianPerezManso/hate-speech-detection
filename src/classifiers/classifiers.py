@@ -13,23 +13,76 @@ from sklearn.multioutput import MultiOutputClassifier
 import logging
 
 class Model(ABC):
+    """
+    Interface for the specific classifiers. Details the needed operations of a model to be used in the system
+    """
+    
     @abstractmethod
     def get_model_opt(self):
+        """
+        Returns an identifier of the model as a string
+
+        :return The model identifier
+        :rtype str
+        """
         pass
+
     @abstractmethod
     def predict(self, msg: str, index: int):
+        """
+        Returns the prediction of the message computed by the model
+
+        :param str msg: The message to be predicted
+        :param int index: The message identifier
+        :return The result of the prediction
+        :rtype Prediction
+        """
         pass
+
     @abstractmethod
     def fit_new_data(self, data):
+        """
+        Trains the model with the data provided as parameter
+
+        :param data: The data to be trained against the model
+        :return The errors found during the process
+        :rtype list[string]
+        """
         pass
+
     @abstractmethod
     def fit_prediction(self, prediction: Prediction):
+        """
+        Trains the model with a new value for the prediction
+
+        :param Prediction prediction: The prediction with the new desired values
+        :return The errors found during the process
+        :rtype list[string]
+        """
         pass
+
     @abstractmethod
     def to_prediction(self, msg: str, index: int, prediction: list[int]):
+        """
+        Builds a Prediction object from the parameters' information
+
+        :param str msg: The message of the prediction
+        :param int index: The message identifier
+        :param list[int] prediction: The new values of the prediction
+        :return The prediction object
+        :rtype Prediction
+        """
         pass
 
 class SKLearnModel(Model, ABC):
+
+    """
+    Abstract class of the two implemented Scikit-Learn-based models
+
+    :attribute bool train: If True, the system creates the classifier and vectorizer and saves them into files
+    :attribute str clf_dir: The path for the classifier object file
+    :attribute str vect_dir: The path for the vectorizer object file
+    """
 
     def __init__(self, train, clf_dir, vect_dir):
         self.vectorizer = None
@@ -65,13 +118,35 @@ class SKLearnModel(Model, ABC):
         return self.to_prediction(msg, index, result)
 
     def _partial_fit(self, x, y):
+        """
+        Transforms and provides the model the new data 
+
+        :param list[str] x: The feature messages
+        :param list[int] or list[list[int]] y: The targets' values
+        """
         X = self._transform_data(x)
         self.classifier.partial_fit(X, y)
     
     def _transform_data(self, data):
+        """
+        Transforms the messages with the vectorizer object
+
+        :param list[str] data: The messages to be transformed
+        :return Document-term matrix
+        :rtype sparse matrix
+        """
         return self.vectorizer.transform(data)
     
     def _filter_invalid_data(self, y: list, x: list[str], num_targets: int):
+        """
+        Filters invalid data from being provided to the classifier
+
+        :param list[int] or list[list[int]] y: The set of data targets
+        :param list[str] x: The set of data messages
+        :param int num_targets: Number of targets that the classifier expects
+        :return The filtered valid messages, targets and found errors
+        :rtype list[int], list[str], list[str] or list[list[int]], list[str], list[str]
+        """
         logging.debug(logconfig.LOG_CLASSIFIER_FIT_NEW_DATA_FILTER_INVALID_DATA_START)
         y_filtered, x_filtered, errors = [], [], []
         for i in range(len(x)):
@@ -99,6 +174,12 @@ class SKLearnModel(Model, ABC):
         return y_filtered, x_filtered, errors
     
     def _save_model(self, classifier, vectorizer):
+        """
+        Stores the classifier and vectorizer objects in their corresponding directories
+        
+        :param Classifier classifier: The classifier object
+        :param Vectorizer vectorizer: The vectorizer object
+        """
         fm.dump_object(self.clf_dir, classifier)
         logging.debug(logconfig.LOG_CLASSIFIER_TRAIN_SAVE_CLF)
 
@@ -106,6 +187,9 @@ class SKLearnModel(Model, ABC):
         logging.debug(logconfig.LOG_CLASSIFIER_TRAIN_SAVE_VECT)
 
     def _train(self):
+        """
+        The initial training process of the model. Trains the model, saves it into files and gets stats from the validation dataset
+        """
         logging.debug(logconfig.LOG_CLASSIFIER_TRAIN_START)
         start = time.time()
         df = fm.load_csv_as_df(self._get_dataset_dir(), 
@@ -163,38 +247,95 @@ class SKLearnModel(Model, ABC):
 
     @abstractmethod
     def _parse_prediction_result(self, result):
+        """
+        Auxiliar method for "predict" parent method. Converts the prediction of the model into a suitable data type for the Prediction object
+
+        :param list[int] or list[list[int]] result: The result of the prediction model
+        :return The prediction with a suitable data type
+        :rtype list[int]
+        """
         pass
 
     @abstractmethod
     def _prepare_prediction_for_validation(self, prediction):
+        """
+        Auxiliar method for "_filter_invalid_data" parent method. Prepares the prediction values to be validated
+
+        :param int or list[int] prediction: The prediction values
+        :return The prediction values prepared to be validated
+        :rtype list[int]
+        """
         pass
     
     @abstractmethod
     def _get_dataset_dir(self):
+        """
+        Returns the path of the model training dataset
+
+        :return The path of the model training dataset
+        :rtype str
+        """
         pass
 
     @abstractmethod
     def _get_headers_for_train(self):
+        """
+        Auxiliar method. Returns the header for the data structure managed in the training process
+
+        :return The headers for the training data structure
+        :rtype list[str]
+        """
         pass
     
     @abstractmethod
     def _split_data(self, df):
+        """
+        Converts the training data structure into training/validation features and targets sets
+
+        :param DataFrame df: The training data structure
+        :return Features and targets of the training and validation sets
+        :rtype list[str], list[str], list[int], list[int] or list[str], list[str], list[list[int]], list[list[int]]
+        """
         pass
 
     @abstractmethod
     def _get_new_vectorizer(self):
+        """
+        Returns a new model vectorizer
+
+        :return A new vectorizer object
+        :rtype Vectorizer
+        """
         pass
 
     @abstractmethod
     def _get_new_classifier(self):
+        """
+        Returns a new model classifier
+
+        :return A new classifier object
+        :rtype Classifier
+        """
         pass
     
     @abstractmethod
     def _get_stats_for_data(self, classifier, X_test, y_test, e_time):
+        """
+        Computes statistics for the validation set
+
+        :param Classifier classifier: The classifier of the model
+        :param list[sparse matrix] X_test: The validation features
+        :param list[int] or list[list[int]] y_test: The validation targets
+        :param int e_time: The training elapsed time
+        """
         pass
 
 
 class BinaryModel(SKLearnModel):
+
+    """
+    Binary model implemented in Scikit Learn. It classifies messages either as 'Appropriate' or 'Inappropriate'
+    """
 
     def __init__(self, train=False):
         super(BinaryModel, self).__init__(train, config.BINARY_MODEL_DIR, config.BINARY_VECT_DIR)
@@ -281,6 +422,16 @@ class BinaryModel(SKLearnModel):
 
 
 class MLModel(SKLearnModel):
+
+    """
+    Multilabel model implemented in Scikit Learn. It classifies messages either in several items:
+        - toxic
+        - severe_toxic
+        - obscene
+        - threat
+        - insult
+        - identity_hate
+    """
 
     def __init__(self, train=False):
         super(MLModel, self).__init__(train, config.MULTILABEL_MODEL_DIR, config.MULTILABEL_VECT_DIR)

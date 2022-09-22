@@ -1,5 +1,9 @@
 import os
 
+"""
+Messages, labels and text values of the user interface
+"""
+
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 HELP_FOLDER = 'help/'
 

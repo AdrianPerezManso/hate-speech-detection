@@ -1,3 +1,3 @@
 """
-The mod module
+User interface packages. Contains the user interface
 """

@@ -1,3 +1,3 @@
 """
-The mod module
+Domain classes
 """

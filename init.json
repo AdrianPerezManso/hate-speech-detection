@@ -1,0 +1,18 @@
+{
+    "args": {
+        "train": {
+            "flag": "--train",
+            "short": "-t",
+            "help": "This flag is mandatory when running the program for the first time. It trains the models and stores them into files",
+            "action": "store_true"
+        }
+    },
+
+    "nltk": {
+        "download": true,
+        "packages": [
+            "stopwords",
+            "punkt"
+        ]
+    }
+}

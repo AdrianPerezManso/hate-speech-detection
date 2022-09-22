@@ -1,18 +1,19 @@
 import os
 
-#Execution arguments
-TRAIN_FLAG = '--train'
-TRAIN_FLAG_SHORT = '-t'
-TRAIN_FLAG_HELP = 'This flag is mandatory when running the program for the first time. It trains the models and stores them into files'
-TRAIN_FLAG_ACTION = 'store_true'
+"""
+Directories, error messages and other constants
+"""
 
 # Directories
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+VIRTUAL_ENV_FOLDER = '.venv/'
+NLTK_DATA_FOLDER = 'nltk_data/'
 MODELS_FOLDER = 'models/'
 DATASETS_FOLDER = 'datasets/'
 BINARY_DATASET_FOLDER = 'binary/'
 MULTILABEL_DATASET_FOLDER = 'ml/'
 
+INIT_JSON_FILENAME = 'init.json'
 BINARY_MODEL_FILENAME = 'binary_classifer.pkl'
 BINARY_VECT_FILENAME = 'binary_vectorizer.pkl'
 MULTILABEL_MODEL_FILENAME = 'multilabel_model.pkl'
@@ -22,6 +23,8 @@ MULTILABEL_TRAIN_DATASET_FILENAME = 'train.csv'
 MULTILABEL_TEST_DATASET_FILENAME = 'test.csv'
 MULTILABEL_TEST_LABELS_FILENAME = 'test_labels.csv'
 
+INIT_JSON_DIR = os.path.join(PROJECT_ROOT, INIT_JSON_FILENAME)
+NLTK_DATA_DIR = os.path.join(PROJECT_ROOT, VIRTUAL_ENV_FOLDER, NLTK_DATA_FOLDER)
 BINARY_MODEL_DIR = os.path.join(PROJECT_ROOT, MODELS_FOLDER, BINARY_MODEL_FILENAME)
 BINARY_VECT_DIR = os.path.join(PROJECT_ROOT, MODELS_FOLDER, BINARY_VECT_FILENAME)
 MULTILABEL_MODEL_DIR = os.path.join(PROJECT_ROOT, MODELS_FOLDER, MULTILABEL_MODEL_FILENAME)
@@ -31,8 +34,21 @@ MULTILABEL_TRAIN_DATASET_DIR = os.path.join(DATASETS_FOLDER, MULTILABEL_DATASET_
 MULTILABEL_TEST_DATASET_DIR = os.path.join(DATASETS_FOLDER, MULTILABEL_DATASET_FOLDER, MULTILABEL_TEST_DATASET_FILENAME)
 MULTILABEL_TEST_LABELS_DIR = os.path.join(DATASETS_FOLDER, MULTILABEL_DATASET_FOLDER, MULTILABEL_TEST_LABELS_FILENAME)
 
+# init.json
+ARGS = 'args'
+TRAIN = 'train'
+SHORT = 'short'
+FLAG = 'flag'
+HELP = 'help'
+ACTION = 'action'
+NLTK = 'nltk'
+DOWNLOAD = 'download'
+PACKAGES = 'packages'
+
 # Database constants
+DATABASE_FOLDER = 'database/'
 DATABASE_NAME = 'users.db'
+DATABASE_DIR = os.path.join(PROJECT_ROOT, DATABASE_FOLDER, DATABASE_NAME)
 QUERY_GET_USER_BY_USERNAME_AND_PASSWORD = 'SELECT password FROM users WHERE username = ?'
 USERNAME_FIELD = 'username'
 PASSWORD_FIELD = 'password'

@@ -1,6 +1,10 @@
 import pandas as pd
 from configs import config, uiconfig
 
+"""
+Validation operations of user inputs and internal checks
+"""
+
 def check_correct_model_opt(opt: str):
     if(opt != uiconfig.UI_BINARY_MODEL and opt != uiconfig.UI_MULTILABEL_MODEL):
         raise Exception(config.ERROR_INVALID_MODEL_OPT)

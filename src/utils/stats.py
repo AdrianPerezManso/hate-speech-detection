@@ -3,6 +3,10 @@ from sklearn import metrics
 from configs import config, logconfig
 import logging
 
+"""
+Statistics for validation datasets
+"""
+
 def get_stats_for_data(classifier, X, y, e_time=0, make_report=False, multilabel=False, mllabels=[]):
     labels = config.STATS_LABELS
 

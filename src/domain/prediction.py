@@ -4,6 +4,14 @@ import logging
 
 class Prediction(ABC):
     
+    """
+    Interface for the specific Prediction classes. It is a wrapper for the computed prediction of a model 
+    represented by the message and actual prediction values
+
+    :attribute str msg: The message of the prediction
+    :index int index: The identifier of the message
+    """
+
     def __init__(self, msg: str, index: int):
         self._msg = msg
         self._index = index
@@ -29,6 +37,13 @@ class Prediction(ABC):
 
 
 class BinaryPrediction(Prediction):
+
+    """
+    The wrapper for a binary prediction
+
+    :attribute int prediction: The value of the prediction
+    """
+
     def __init__(self, msg: str, index: int,  prediction: int):
         super(BinaryPrediction, self).__init__(msg, index)
         self._prediction = prediction
@@ -55,7 +70,15 @@ class BinaryPrediction(Prediction):
 
 
 class MLPrediction(Prediction):
-    def __init__(self, msg: str, index: int, prediction: list[list[int]]):
+
+    """
+    The wrapper for a multilabel prediction
+
+    :param list[int] prediction: The values of the prediction. 
+           The order of the labels is: 'toxic', 'severe_toxic', 'obscene', 'threat', 'insult' and 'identity_hate'
+    """
+
+    def __init__(self, msg: str, index: int, prediction: list[int]):
         super(MLPrediction, self).__init__(msg, index)
         self._prediction = prediction
         logging.info(logconfig.LOG_ML_PREDICTION_INIT.format(index=index, msg=msg, pred=prediction))
@@ -98,6 +121,13 @@ class MLPrediction(Prediction):
         return result
 
 class EmptyPrediction(Prediction):
+
+    """
+    Wrapper for an invalid prediction
+
+    :param str error_msg: The error regarding the computed prediction
+    """
+
     def __init__(self, msg: str, index: int, error_msg: str):
         super(EmptyPrediction, self).__init__(msg, index)
         self._error_msg = error_msg

@@ -1,7 +1,10 @@
 from controller.controller import ClassificationController
+from configs import config
 import time
 
-from src.configs import config
+"""
+Performance tests
+"""
 
 def test_1_1_1_2():
     ClassificationController(True)

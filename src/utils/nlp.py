@@ -2,14 +2,21 @@ from nltk.stem import SnowballStemmer
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import CountVectorizer
 from configs import config, logconfig
+from utils import file_management as fm
 import nltk
 import wordsegment as ws
 import logging
 
+"""
+Preprocessing of text
+"""
 
+ws.load()
+data = fm.json_to_data(config.INIT_JSON_DIR)
+[nltk.download(package, download_dir=config.NLTK_DATA_DIR) for package in data[config.NLTK][config.PACKAGES] if data[config.NLTK][config.DOWNLOAD]]
 
 EN_STOP_WORDS = stopwords.words('english')
-ws.load()
+
 def clean_message(message):
     #logging.debug(logconfig.LOG_NLP_START)
     tokenizer = nltk.RegexpTokenizer(config.REGEX_TOKENIZER)

@@ -1,0 +1,261 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module ui.user_interface</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="ui.html"><font color="#ffffff">ui</font></a>.user_interface</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:d%3A%5Cdocumentos%20hdd%5Ctfg%5Chate-speech-detection%5Csrc%5Cui%5Cuser_interface.py">d:\documentos hdd\tfg\hate-speech-detection\src\ui\user_interface.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="utils.file_management.html">utils.file_management</a><br>
+<a href="functools.html">functools</a><br>
+</td><td width="25%" valign=top><a href="PySimpleGUI.html">PySimpleGUI</a><br>
+<a href="textwrap.html">textwrap</a><br>
+</td><td width="25%" valign=top><a href="configs.uiconfig.html">configs.uiconfig</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="ui.user_interface.html#AuthenticationWindow">AuthenticationWindow</a>
+</font></dt><dt><font face="helvetica, arial"><a href="ui.user_interface.html#DialogWindow">DialogWindow</a>
+</font></dt><dt><font face="helvetica, arial"><a href="ui.user_interface.html#HelpWindow">HelpWindow</a>
+</font></dt><dt><font face="helvetica, arial"><a href="ui.user_interface.html#MainWindow">MainWindow</a>
+</font></dt><dt><font face="helvetica, arial"><a href="ui.user_interface.html#TrainingConfirmationWindow">TrainingConfirmationWindow</a>
+</font></dt><dt><font face="helvetica, arial"><a href="ui.user_interface.html#TrainingWindow">TrainingWindow</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="AuthenticationWindow">class <strong>AuthenticationWindow</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#AuthenticationWindow">AuthenticationWindow</a>(controller:&nbsp;controller.controller.ClassificationController)<br>
+&nbsp;<br>
+Window&nbsp;that&nbsp;manages&nbsp;the&nbsp;authentication&nbsp;process<br>
+&nbsp;<br>
+:attribute&nbsp;ClassificationController&nbsp;controller:&nbsp;The&nbsp;logic&nbsp;controller<br>
+:attribute&nbsp;bool&nbsp;authenticated:&nbsp;Whether&nbsp;the&nbsp;user&nbsp;has&nbsp;logged&nbsp;as&nbsp;an&nbsp;administrator&nbsp;or&nbsp;not<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="AuthenticationWindow-__init__"><strong>__init__</strong></a>(self, controller: controller.controller.ClassificationController)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="AuthenticationWindow-handle_credential_in_event"><strong>handle_credential_in_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="AuthenticationWindow-handle_events"><strong>handle_events</strong></a>(self, window)</dt></dl>
+
+<dl><dt><a name="AuthenticationWindow-handle_submission_event"><strong>handle_submission_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="AuthenticationWindow-run"><strong>run</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DialogWindow">class <strong>DialogWindow</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#DialogWindow">DialogWindow</a>(title,&nbsp;messages=[])<br>
+&nbsp;<br>
+Pop-up&nbsp;dialog&nbsp;that&nbsp;contains&nbsp;messages&nbsp;or&nbsp;errors&nbsp;to&nbsp;be&nbsp;presented&nbsp;to&nbsp;the&nbsp;user<br>
+&nbsp;<br>
+:attribute&nbsp;str&nbsp;title:&nbsp;The&nbsp;title&nbsp;of&nbsp;the&nbsp;dialog<br>
+:attribute&nbsp;list[str]&nbsp;messages:&nbsp;The&nbsp;messages&nbsp;or&nbsp;errors&nbsp;to&nbsp;be&nbsp;shown<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="DialogWindow-__init__"><strong>__init__</strong></a>(self, title, messages=[])</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="DialogWindow-run"><strong>run</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="HelpWindow">class <strong>HelpWindow</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#HelpWindow">HelpWindow</a>(text_file_path)<br>
+&nbsp;<br>
+Dialog&nbsp;that&nbsp;contains&nbsp;guidance&nbsp;on&nbsp;the&nbsp;files&nbsp;that&nbsp;the&nbsp;user&nbsp;may&nbsp;submit&nbsp;and&nbsp;their&nbsp;correct&nbsp;format<br>
+&nbsp;<br>
+:attribute&nbsp;str&nbsp;text:&nbsp;The&nbsp;help&nbsp;message<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="HelpWindow-__init__"><strong>__init__</strong></a>(self, text_file_path)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="HelpWindow-run"><strong>run</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="MainWindow">class <strong>MainWindow</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#MainWindow">MainWindow</a>(controller:&nbsp;controller.controller.ClassificationController)<br>
+&nbsp;<br>
+The&nbsp;main&nbsp;window&nbsp;of&nbsp;the&nbsp;application.&nbsp;It&nbsp;summarizes&nbsp;most&nbsp;of&nbsp;the&nbsp;possible&nbsp;tasks<br>
+&nbsp;<br>
+:attribute&nbsp;ClassificationController&nbsp;controller:&nbsp;The&nbsp;controller&nbsp;that&nbsp;performs&nbsp;the&nbsp;operations<br>
+:attribute&nbsp;str&nbsp;uploaded_file:&nbsp;The&nbsp;path&nbsp;of&nbsp;the&nbsp;messages&nbsp;file<br>
+:attribute&nbsp;bool&nbsp;authenticated:&nbsp;Whether&nbsp;the&nbsp;user&nbsp;is&nbsp;logged&nbsp;in&nbsp;as&nbsp;administrator&nbsp;or&nbsp;not<br>
+:attribute&nbsp;list[Prediction]&nbsp;last_predictions:&nbsp;The&nbsp;last&nbsp;performed&nbsp;predictions<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="MainWindow-__init__"><strong>__init__</strong></a>(self, controller: controller.controller.ClassificationController)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="MainWindow-handle_cancel_correct_pred_event"><strong>handle_cancel_correct_pred_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="MainWindow-handle_classify_event"><strong>handle_classify_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="MainWindow-handle_clear_event"><strong>handle_clear_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="MainWindow-handle_events"><strong>handle_events</strong></a>(self, window)</dt></dl>
+
+<dl><dt><a name="MainWindow-handle_message_file_submission_event"><strong>handle_message_file_submission_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="MainWindow-handle_message_text_area_event"><strong>handle_message_text_area_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="MainWindow-handle_method_change_event"><strong>handle_method_change_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="MainWindow-handle_n_msg_combo_event"><strong>handle_n_msg_combo_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="MainWindow-handle_open_auth_event"><strong>handle_open_auth_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="MainWindow-handle_open_train_event"><strong>handle_open_train_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="MainWindow-handle_refresh_classify_event"><strong>handle_refresh_classify_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="MainWindow-handle_save_csv_event"><strong>handle_save_csv_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="MainWindow-handle_save_txt_event"><strong>handle_save_txt_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="MainWindow-handle_submit_correct_pred_event"><strong>handle_submit_correct_pred_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="MainWindow-handle_submit_help_event"><strong>handle_submit_help_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="MainWindow-run"><strong>run</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="TrainingConfirmationWindow">class <strong>TrainingConfirmationWindow</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#TrainingConfirmationWindow">TrainingConfirmationWindow</a>(controller,&nbsp;controller_fn,&nbsp;title,&nbsp;window_msg,&nbsp;final_msg)<br>
+&nbsp;<br>
+Confirmation&nbsp;window&nbsp;that&nbsp;presents&nbsp;a&nbsp;summary&nbsp;of&nbsp;the&nbsp;task&nbsp;that&nbsp;the&nbsp;administator&nbsp;wants&nbsp;to&nbsp;do<br>
+&nbsp;<br>
+:attribute&nbsp;ClassificationController&nbsp;controller:&nbsp;The&nbsp;logic&nbsp;controller<br>
+:attribute&nbsp;function&nbsp;controller_fn:&nbsp;The&nbsp;controller&nbsp;function&nbsp;to&nbsp;be&nbsp;executed<br>
+:attribute&nbsp;str&nbsp;window_msg:&nbsp;The&nbsp;summary&nbsp;message<br>
+:attribute&nbsp;str&nbsp;title:&nbsp;The&nbsp;title&nbsp;of&nbsp;the&nbsp;window<br>
+:attribute&nbsp;str&nbsp;final_msg:&nbsp;The&nbsp;message&nbsp;shown&nbsp;after&nbsp;the&nbsp;operation&nbsp;ends<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="TrainingConfirmationWindow-__init__"><strong>__init__</strong></a>(self, controller, controller_fn, title, window_msg, final_msg)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="TrainingConfirmationWindow-handle_confirmation_event"><strong>handle_confirmation_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="TrainingConfirmationWindow-handle_events"><strong>handle_events</strong></a>(self, window)</dt></dl>
+
+<dl><dt><a name="TrainingConfirmationWindow-run"><strong>run</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="TrainingWindow">class <strong>TrainingWindow</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#TrainingWindow">TrainingWindow</a>(controller:&nbsp;controller.controller.ClassificationController)<br>
+&nbsp;<br>
+Window&nbsp;that&nbsp;encapsulates&nbsp;the&nbsp;operation&nbsp;of&nbsp;retraining&nbsp;a&nbsp;model&nbsp;with&nbsp;new&nbsp;data<br>
+&nbsp;<br>
+:attribute&nbsp;ClassificationController&nbsp;controller:&nbsp;The&nbsp;logic&nbsp;controller<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="TrainingWindow-__init__"><strong>__init__</strong></a>(self, controller: controller.controller.ClassificationController)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="TrainingWindow-handle_events"><strong>handle_events</strong></a>(self, window)</dt></dl>
+
+<dl><dt><a name="TrainingWindow-handle_file_submission_event"><strong>handle_file_submission_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="TrainingWindow-handle_method_combo_event"><strong>handle_method_combo_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="TrainingWindow-handle_train_help_event"><strong>handle_train_help_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="TrainingWindow-handle_train_submission_event"><strong>handle_train_submission_event</strong></a>(self, window, values)</dt></dl>
+
+<dl><dt><a name="TrainingWindow-run"><strong>run</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>

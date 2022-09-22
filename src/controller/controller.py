@@ -7,6 +7,15 @@ from utils import file_management as fm, validation
 import logging
 
 class ClassificationController:
+    """
+    The system controller. Manages the operations demanded by the user and distributes them if it is the case
+
+    :attribute Model model: The current select model for classification
+    :attribute AuthenticationModule auth_module: The module of authentication
+    :attribute bool authenticated: Represents if the user is logged in as an administrator
+    :attribute list[Prediction] last_predictions: The last performed predictions on the system
+    """
+
     def __init__(self, train=False):
         if(train):
             logging.info(logconfig.LOG_CONTROLLER_TRAIN_START)
@@ -20,6 +29,13 @@ class ClassificationController:
         logging.info(logconfig.LOG_CONTROLLER_INIT)
 
     def predict(self, messages: list[str]):
+        """
+        Returns the set of prediction corresponding to the input set of messages
+
+        :param list[str] messages: The messages to be classified
+        :return The predictions and found errors
+        :rtype list[Prediction], list[str] 
+        """
         logging.info(logconfig.LOG_CONTROLLER_PREDICT_START)
         result, errors = [], []
         for index, msg in enumerate(messages):
@@ -45,9 +61,17 @@ class ClassificationController:
                 logging.debug(logconfig.LOG_CONTROLLER_ADDED_ERROR_TO_ERRORS)
 
         logging.info(logconfig.LOG_CONTROLLER_PREDICT_END)
+
         return result, errors
 
     def predict_messages_in_file(self, msgs_path: str):
+        """
+        Makes classifications for messages contained in a file
+
+        :param str msgs_path: The path of the file containing the messages
+        :return The set of predictions for each message and found errors
+        :rtype list[Prediction], list[str]
+        """
         logging.info(logconfig.LOG_CONTROLLER_PREDICT_FILE_START)
         result, errors = [], []
         try:
@@ -68,9 +92,16 @@ class ClassificationController:
             logging.debug(logconfig.LOG_CONTROLLER_ADDED_ERROR_TO_ERRORS)
 
         logging.info(logconfig.LOG_CONTROLLER_PREDICT_FILE_END)
+
         return result, errors
 
     def redo_last_prediction(self):
+        """
+        Recomputes classifications for the last performed predictions
+
+        :return The set of predictions for each message and found errors
+        :rtype list[Prediction], list[str]
+        """
         logging.info(logconfig.LOG_CONTROLLER_REDO_LAST_PREDICTION_START)
         result, errors = [], []
         try:
@@ -89,9 +120,17 @@ class ClassificationController:
             logging.debug(logconfig.LOG_CONTROLLER_ADDED_ERROR_TO_ERRORS)
 
         logging.info(logconfig.LOG_CONTROLLER_REDO_LAST_PREDICTION_END)
+
         return result, errors
 
     def change_classification_method(self, model_opt: str):
+        """
+        Selects the model with which to make the possible tasks
+
+        :param str model_opt: The identifier of the model
+        :return Errors found during the process
+        :rtype list[str]
+        """
         logging.info(logconfig.LOG_CONTROLLER_CHANGE_METHOD_START)
         errors = []
         try:
@@ -108,10 +147,19 @@ class ClassificationController:
             logging.debug(logconfig.LOG_CONTROLLER_ADDED_ERROR_TO_ERRORS)
 
         logging.info(logconfig.LOG_CONTROLLER_CHANGE_METHOD_END)
+
         return errors
 
 
     def authenticate(self, usr: str, pwd: str):
+        """
+        Invokes the AuthenticationModule to authenticate the user
+
+        :param str usr: The input username
+        :param str pwd: The input password
+        :return Errors found during the process
+        :rtype list[str]
+        """
         logging.info(logconfig.LOG_CONTROLLER_AUTHENTICATE_START)
         errors = []
         try:
@@ -131,9 +179,18 @@ class ClassificationController:
             logging.debug(logconfig.LOG_CONTROLLER_ADDED_ERROR_TO_ERRORS)
 
         logging.info(logconfig.LOG_CONTROLLER_AUTHENTICATE_END.format(result=self.authenticated))
+
         return errors
 
     def correct_predictions(self, msg_index: int, prediction_values: list[int]):
+        """
+        Provides the current selected model information about a message prediction to correct it
+
+        :param int msg_index: The identifier of the message
+        :param list[int] prediction_values: The list of new prediction values of the message
+        :return Errors found during the process
+        :rtype list[str]
+        """
         logging.info(logconfig.LOG_CONTROLLER_CORRECT_PRED_START)
         errors = []
         try:
@@ -160,9 +217,18 @@ class ClassificationController:
             logging.debug(logconfig.LOG_CONTROLLER_ADDED_ERROR_TO_ERRORS)
             
         logging.info(logconfig.LOG_CONTROLLER_CORRECT_PRED_END)
+
         return errors
 
     def train_models(self, model_opt: str, file_path: str):
+        """
+        Provides a model new data as new training data, keeping the original information
+
+        :param str model_opt: The identifier of the model to be retrained
+        :param str file_path: The path to the file containing the new data
+        :return Errors found during the process
+        :rtype list[str]
+        """
         logging.info(logconfig.LOG_CONTROLLER_RETRAIN_MODEL_START)
         errors = []
         try:
@@ -188,9 +254,17 @@ class ClassificationController:
             logging.debug(logconfig.LOG_CONTROLLER_ADDED_ERROR_TO_ERRORS)
 
         logging.info(logconfig.LOG_CONTROLLER_RETRAIN_MODEL_END)
+
         return errors
 
     def save_results_to_csv(self, path):
+        """
+        Creates a .csv file and saves the last performed predictions
+
+        :param str path: The directory in which the file will be stored
+        :return Errors found during the process
+        :rtype list[str]
+        """
         logging.info(logconfig.LOG_CONTROLLER_SAVE_RESULTS_TO_CSV_START)
         errors = []
         filename = ''
@@ -214,9 +288,17 @@ class ClassificationController:
             logging.debug(logconfig.LOG_CONTROLLER_ADDED_ERROR_TO_ERRORS)
 
         logging.info(logconfig.LOG_CONTROLLER_SAVE_RESULTS_TO_CSV_END)
+
         return errors, filename
 
     def save_results_to_txt(self, path):
+        """
+        Creates a .txt file with a human-friendly format and saves the last performed predictions
+
+        :param str path: The directory in which the file will be stored
+        :return Errors found during the process
+        :rtype list[str]
+        """
         logging.info(logconfig.LOG_CONTROLLER_SAVE_RESULTS_TO_TXT_START)
         errors = []
         filename = ''
@@ -237,13 +319,24 @@ class ClassificationController:
             logging.debug(logconfig.LOG_CONTROLLER_ADDED_ERROR_TO_ERRORS)
 
         logging.info(logconfig.LOG_CONTROLLER_SAVE_RESULTS_TO_TXT_END)
+
         return errors, filename
 
     def clear_classification(self):
+        """
+        Removes the last performed predictions
+        """
         self.last_predictions = []
         logging.info(logconfig.LOG_CONTROLLER_CLEAR_CLASSIFICATION)
 
     def _model_opt_to_model(self, model_opt):
+        """
+        Returns the model determined by its identifier
+
+        :param str model_opt: The model identifier
+        :return The identified model
+        :rtype Model or None
+        """
         if(model_opt == uiconfig.UI_BINARY_MODEL):
             return BinaryModel()
         elif(model_opt == uiconfig.UI_MULTILABEL_MODEL):
@@ -252,6 +345,14 @@ class ClassificationController:
             return None
 
     def _get_prediction_by_index(self, index):
+        """
+        Looks for the prediction inside the last performed predictions by its index
+
+        :param int index: The prediction identifier
+        :return The prediction object
+        :rtype Prediction
+        :raises Exception if the prediction is not found
+        """
         result = list(filter(lambda pred: pred._index == index, self.last_predictions))
         if(not len(result)): raise Exception(config.ERROR_NOT_VALID_INDEX)
         logging.info(logconfig.LOG_CONTROLLER_MESSAGE_BY_INDEX_VALIDATION.format(index=index+1))
@@ -259,6 +360,9 @@ class ClassificationController:
         return result[0]
     
     def _refresh_model(self):
+        """
+        Reinitializes the models in order to see possible changes
+        """
         if(self.model.get_model_opt() == uiconfig.UI_BINARY_MODEL):
             self.change_classification_method(uiconfig.UI_MULTILABEL_MODEL)
             self.change_classification_method(uiconfig.UI_BINARY_MODEL)

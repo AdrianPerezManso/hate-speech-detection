@@ -14,7 +14,12 @@ class AuthenticationModule:
 
     def authenticate(self, usr: str, pwd: str):
         """
-        Authentication method
+        Authentication method that communicates with the database
+
+        :param str usr: Input username
+        :param str pwd: Input password
+        :return The authentication result
+        :rtype bool
         """
         password = self.repository.get_password_by_username(usr)
         logging.debug(logconfig.LOG_AUTHENTICATE_EXECUTED_QUERY)

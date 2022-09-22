@@ -7,6 +7,15 @@ from utils import file_management as fm
 
 class MainWindow:
 
+    """
+    The main window of the application. It summarizes most of the possible tasks
+
+    :attribute ClassificationController controller: The controller that performs the operations
+    :attribute str uploaded_file: The path of the messages file
+    :attribute bool authenticated: Whether the user is logged in as administrator or not
+    :attribute list[Prediction] last_predictions: The last performed predictions
+    """
+    
     def __init__(self, controller: ClassificationController):
         self.controller = controller
         self.uploaded_file = ''
@@ -380,6 +389,14 @@ class MainWindow:
         window.close()
 
 class AuthenticationWindow:
+
+    """
+    Window that manages the authentication process
+
+    :attribute ClassificationController controller: The logic controller
+    :attribute bool authenticated: Whether the user has logged as an administrator or not
+    """
+
     def __init__(self, controller: ClassificationController):
         self.controller = controller
         self.authenticated = False
@@ -489,6 +506,13 @@ class AuthenticationWindow:
         return self.authenticated
 
 class TrainingWindow:
+
+    """
+    Window that encapsulates the operation of retraining a model with new data
+
+    :attribute ClassificationController controller: The logic controller
+    """
+
     def __init__(self, controller: ClassificationController):
         self.controller = controller
 
@@ -607,6 +631,17 @@ class TrainingWindow:
         window.close()
 
 class TrainingConfirmationWindow:
+
+    """
+    Confirmation window that presents a summary of the task that the administator wants to do
+
+    :attribute ClassificationController controller: The logic controller
+    :attribute function controller_fn: The controller function to be executed
+    :attribute str window_msg: The summary message
+    :attribute str title: The title of the window
+    :attribute str final_msg: The message shown after the operation ends
+    """
+
     def __init__(self, controller, controller_fn, title, window_msg, final_msg):
         self.controller = controller
         self.controller_fn = controller_fn
@@ -660,6 +695,14 @@ class TrainingConfirmationWindow:
         window.close()
 
 class DialogWindow:
+
+    """
+    Pop-up dialog that contains messages or errors to be presented to the user
+
+    :attribute str title: The title of the dialog
+    :attribute list[str] messages: The messages or errors to be shown
+    """
+
     def __init__(self, title, messages=[]):
         self.title = title
         self.messages = messages       
@@ -695,6 +738,12 @@ class DialogWindow:
         window.close()
 
 class HelpWindow:
+
+    """
+    Dialog that contains guidance on the files that the user may submit and their correct format
+
+    :attribute str text: The help message
+    """
 
     def __init__(self, text_file_path):
         self.text = fm.file_to_string(text_file_path)

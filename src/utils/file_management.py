@@ -2,6 +2,15 @@ import pickle
 import pandas as pd
 import csv
 import os
+import json
+
+"""
+File management operations
+"""
+
+def json_to_data(path):
+    with open(path) as j:
+        return json.load(j)
 
 def dump_object(path, object):
     if(not os.path.exists(os.path.dirname(path))): os.makedirs(path)

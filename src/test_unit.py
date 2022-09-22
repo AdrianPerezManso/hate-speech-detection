@@ -8,6 +8,10 @@ import unittest
 
 class BusinessTestClass(unittest.TestCase):
 
+    """
+    Unit test class
+    """
+
     def test_correct_initialization(self):
         """Initialization test"""
         controller = ClassificationController()

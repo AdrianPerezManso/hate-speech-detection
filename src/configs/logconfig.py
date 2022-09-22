@@ -3,6 +3,10 @@ from datetime import datetime
 import os
 import logging
 
+"""
+Configuration for the system logging and messages
+"""
+
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 LOG_FOLDER = 'log/'
 OUTPUT_LOG_FILE_DIR = os.path.join(PROJECT_ROOT, LOG_FOLDER)

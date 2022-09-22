@@ -5,13 +5,18 @@ import os
 import logging
 
 class UserRepository:
-    
+    """
+    Repository for the users' database. Manages connection and queries
+    """
     def __init__(self):
-        self.database_path = os.path.join(config.PROJECT_ROOT, config.DATABASE_NAME)
+        self.database_path = config.DATABASE_DIR
         self.connection = None
         logging.debug(logconfig.LOG_USER_REPO_INIT)
 
     def _create_connection(self):
+        """
+        Create connection with database
+        """
         try:
             self.connection = sqlite3.connect(self.database_path)
             logging.debug(logconfig.LOG_USER_REPO_CREATED_CON)
@@ -20,6 +25,9 @@ class UserRepository:
         
 
     def _close_connection(self):
+        """
+        Close connection with database
+        """
         try:
             if self.connection:
                 self.connection.close()
@@ -28,6 +36,13 @@ class UserRepository:
             logging.error(logconfig.LOG_USER_REPO_ERROR).format(error=e)
     
     def get_password_by_username(self, usr: str):
+        """
+        This method returns any password found for the username given
+        
+        :param str usr: The username
+        :return: The password retrieved from the database. If it didn't exist None is returned
+        :rtype: str or None
+        """
         self._create_connection()
         try:
             cursor = self.connection.cursor()

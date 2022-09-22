@@ -1,6 +1,7 @@
 from ui.user_interface import MainWindow
 from controller.controller import ClassificationController
 from configs import config, logconfig
+from utils import file_management as fm
 import argparse
 import os
 import logging
@@ -17,7 +18,9 @@ def main():
     logging.info(logconfig.LOG_MAIN_START_OF_APPLICATION)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument(config.TRAIN_FLAG_SHORT, config.TRAIN_FLAG, help=config.TRAIN_FLAG_HELP, action=config.TRAIN_FLAG_ACTION)
+    data = fm.json_to_data(config.INIT_JSON_DIR)
+    train = data[config.ARGS][config.TRAIN]
+    parser.add_argument(train[config.SHORT], train[config.FLAG], help=train[config.HELP], action=train[config.ACTION])
     args = parser.parse_args()
     logging.info(logconfig.LOG_MAIN_FLAG_PARSING.format(t=args.train))
     
